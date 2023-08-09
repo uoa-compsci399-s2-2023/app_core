@@ -58,6 +58,14 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+          expo-cache: true
+          eas-cache: true
 
       - run: npm ci
-      - run: eas build --platform android --local --profile dev --non-interactive
+      - run: eas build --platform android --local --profile dev --non-interactive --output android_dev.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+            name: android_dev
+            path: /home/runner/work/app_core/app_core/android_dev.apk

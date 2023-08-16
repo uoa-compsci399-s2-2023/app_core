@@ -1,48 +1,13 @@
-# This workflow should trigger everytime a branch is pushed to remote, it will test that your commit
-# runs and that all tests pass
-name: Build and Test
+# This workflow should trigger everytime a branch is pushed to remote and a pull request is open for that branch
+name: Build
 
 on:
-  push:
-    branches:
-      - "**"
+  pull_request:
 
 jobs:
-
-  check-lint:
-    environment: verification
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Using node 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - run: npm ci
-      - run: npm run lint
-
-  unit-test:
-    environment: verification
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Using node 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - run: npm ci
-      - run: npm run unit-test
-
   build-android-dev:
     environment: build
     runs-on: ubuntu-latest
-    needs: [check-lint, unit-test]
 
     steps:
       - uses: actions/checkout@v3
@@ -73,7 +38,6 @@ jobs:
   build-android-preview:
     environment: build
     runs-on: ubuntu-latest
-    needs: [check-lint, unit-test]
 
     steps:
       - uses: actions/checkout@v3

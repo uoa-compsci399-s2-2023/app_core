@@ -5,15 +5,18 @@
   "scripts": {
     "lint": "eslint --ext .jsx,.js src/",
     "lint-apply": "eslint --ext .jsx,.js src/ --fix",
-    "unit-test": "jest"
+    "unit-test": "jest",
+    "build-android-dev-client": "eas build --platform android --local --profile dev-client --non-interactive --output bin/android_dev-client.apk",
+    "build-android-dev": "eas build --platform android --local --profile dev --non-interactive --output bin/android_dev.apk",
+    "build-android-preview": "eas build --platform android --local --profile preview --non-interactive --output bin/android_preview.apk"
   },
   "dependencies": {
     "eas-cli": "^4.1.1",
     "expo": "~49.0.5",
+    "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
-    "react-native": "0.72.3",
-    "expo-splash-screen": "~0.20.5"
+    "react-native": "0.72.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -12,6 +12,7 @@
     "start-expo-client": "expo start --dev-client"
   },
   "dependencies": {
+    "@aws-sdk/client-textract": "^3.395.0",
     "eas-cli": "^4.1.1",
     "expo": "~49.0.5",
     "expo-splash-screen": "~0.20.5",
@@ -28,5 +29,9 @@
     "expo-dev-client": "^2.4.6",
     "jest": "^29.6.2"
   },
-  "private": true
+  "jest": {
+    "preset": "react-native"
+  },
+  "private": true,
+  "type": "module"
 }

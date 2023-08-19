@@ -8,7 +8,8 @@
     "unit-test": "jest",
     "build-android-dev-client": "eas build --platform android --local --profile dev-client --non-interactive --output bin/android_dev-client.apk",
     "build-android-dev": "eas build --platform android --local --profile dev --non-interactive --output bin/android_dev.apk",
-    "build-android-preview": "eas build --platform android --local --profile preview --non-interactive --output bin/android_preview.apk"
+    "build-android-preview": "eas build --platform android --local --profile preview --non-interactive --output bin/android_preview.apk",
+    "start-expo-client": "expo start --dev-client"
   },
   "dependencies": {
     "eas-cli": "^4.1.1",

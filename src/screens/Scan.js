@@ -34,8 +34,8 @@ export default function Scan({ navigation }) {
   async function takePicture() {
     if (this.camera) {
       setShowSpinner(true);
-      const data = await this.camera.takePictureAsync({ base64: true });
       this.camera.pausePreview();
+      const data = await this.camera.takePictureAsync({ base64: true });
       const imageByte = Buffer.from(data.base64, 'base64');
       const textractResponse = await textract.detectDocumentText({
         data: imageByte,

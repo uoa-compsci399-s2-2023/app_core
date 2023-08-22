@@ -18,7 +18,7 @@ const filePath = process.argv[2];
 
 async function main() {
   const data = await fs.promises.readFile(filePath);
-  const response = await textract.detectDocumentText(data);
+  const response = await textract.detectDocumentText({ data });
   const scan = Scan.fromTextractResponse(response);
   
   return scan.text;

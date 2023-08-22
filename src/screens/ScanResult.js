@@ -66,6 +66,11 @@ export default function ScanResult({ route, navigation }) {
   );
 }
 
+
+
+
+
+
 const styles = StyleSheet.create({
 
   button: {

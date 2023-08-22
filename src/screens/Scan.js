@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import { FontAwesome } from '@expo/vector-icons'; 
-import { View, StyleSheet, Pressable, Text, Button } from 'react-native';
+import { View, StyleSheet, Pressable, Button } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import { Buffer } from 'buffer';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -9,6 +9,7 @@ import textract from '../textract';
 import ScanModel from '../models/Scan';
 
 import { Screen } from "../components/Layout";
+import { Alert } from "../components/Modals.js";
 
 export default function Scan({ navigation }) {
   const [ awsAccessKeyId, setAwsAccessKeyId ] = useState('');
@@ -28,15 +29,6 @@ export default function Scan({ navigation }) {
 
   if (!permission) {
     return <View />;
-  }
-
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
   }
 
   async function takePicture() {
@@ -64,6 +56,14 @@ export default function Scan({ navigation }) {
         visible={showSpinner}
         textContent={'Analysing...'}
       />
+
+      { /* This may need to be moved, depending on the camera component handles no permissions? */ }
+      <Alert
+        visible = {!permission.granted}
+        modalTitle={"Camera Access"}
+        modalText={"For our application to work we require access to your camera."}
+        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.navigate("Login") }} />
+
       <View style={styles.container}>
         <Pressable style={styles.configIcon} onPress={() => navigation.navigate('Config')}>
           <FontAwesome name="gear" size={40} color="black" />

@@ -27,6 +27,11 @@ export default function Config({ navigation }) {
 
   return (
     <Screen>
+      <Button
+        onPress={() =>
+        navigation.navigate('ScanResult')}
+        title="Results Screen Bypass"
+      />
       <Text>AWS Access Key ID: </Text>
       <TextInput
         style={styles.input}

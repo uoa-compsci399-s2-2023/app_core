@@ -1,11 +1,16 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View, Text, StyleSheet, TextInput,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Screen } from "../components/Layout";
 
 
+
+
 export default function TokensDetected({ route}) {
   const { scannedText } = route.params;
+  const inputRef = useRef(null);
+
+
   
   const fileName = scannedText.split(/\r?\n/);
   let cleanedTitle = "";
@@ -14,6 +19,8 @@ export default function TokensDetected({ route}) {
   const title = fileName.find(element => element.includes("Title"));
   const folder = fileName.findIndex(element => element.includes("Folder"));
   const date = fileName.findIndex(element => element.includes("@"));
+
+
 
 
 
@@ -35,47 +42,101 @@ export default function TokensDetected({ route}) {
 
   if (date !== -1) {
     const dateElement = fileName[date];
-    cleanedDate = dateElement.substr(1).trim(); // Remove the "@" symbol and trim
+    cleanedDate = dateElement.substr(1).trim(); 
   }
 
-  const changeTitle = () => {
-    const newTitle = prompt("Enter new title");
-    if (newTitle) {
-      cleanedTitle = newTitle;
-    }
-  }
 
-  const changeAgenda = () => {
-    const newAgenda = prompt("Enter new agenda");
-    if (newAgenda) {
-      cleanedAgenda = newAgenda;
+  const [isEditing, setIsEditing] = useState(false);
+  const [fileNameText, setText] = useState(cleanedTitle + "-" + cleanedDate ); 
+  const [agendaText, setAgendaText] = useState(cleanedAgenda);
+
+  const editText = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const saveText = () => {
+    if (inputRef.current) {
+      setText(inputRef.current.value);
+      setIsEditing(false);
     }
-  }
+  };
+
+
 
   
   return (
     <Screen>
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>FileName:</Text>
-        <View style={styles.buttonContainer}>
-          <Icon name="edit" size={25} color="black" style={styles.icon} onPress={changeTitle} />
+      <View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>FileName:</Text>
+          <View style={styles.buttonContainer}>
+            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
+          </View>
+        </View>
+        <View style={styles.dataContainer}>
+          {isEditing ? (
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              value={fileNameText}
+              onChangeText={(newText) => setText(newText)}
+              autoFocus
+            />
+          ) : (
+            <Text>{fileNameText}</Text>
+          )}
+          {isEditing ? (
+            <TouchableOpacity onPress={editText}>
+              <Text>Edit</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
-      <View style={styles.dataContainer}>
-        <Text>{cleanedTitle} - {cleanedDate}</Text>
+
+
+      <View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Agenda:</Text>
+          <View style={styles.buttonContainer}>
+            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
+          </View>
+        </View>
+        <View style={styles.dataContainer}>
+          {isEditing ? (
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              value={agendaText}
+              onChangeText={(newText) => setAgendaText(newText)}
+              autoFocus
+            />
+          ) : (
+            <Text>{agendaText}</Text>
+          )}
+          {isEditing ? (
+            <TouchableOpacity onPress={editText}>
+              <Text>Edit</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
+
+
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>Agenda:</Text>
         <View style={styles.buttonContainer}>
-          <Icon name="edit" size={25} color="black" style={styles.icon} onPress={changeAgenda} />
+          <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
         </View>
       </View>
       <View style={styles.dataContainer}>
         <Text>{cleanedAgenda}</Text>
       </View>
+
       <View style={styles.nextIconContainer}>
         <Icon name="arrow-circle-o-right" size={100} color="black" />
       </View>
+
+
     </Screen>
   );
 }

@@ -46,20 +46,29 @@ export default function TokensDetected({ route}) {
   }
 
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingFile, setIsEditingFIle] = useState(false);
+  const [isEditingAgen, setIsEditingAgen] = useState(false);
   const [fileNameText, setText] = useState(cleanedTitle + "-" + cleanedDate ); 
   const [agendaText, setAgendaText] = useState(cleanedAgenda);
-
-  const editText = () => {
-    setIsEditing(!isEditing);
-  };
 
   const saveText = () => {
     if (inputRef.current) {
       setText(inputRef.current.value);
-      setIsEditing(false);
     }
   };
+
+
+  const editFileName = () => {
+    setIsEditingFIle(!isEditingFile);
+  };
+
+  
+  const editAgenda = () => {
+    setIsEditingAgen(!isEditingAgen);
+  };
+
+
+  
 
 
 
@@ -70,12 +79,12 @@ export default function TokensDetected({ route}) {
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>FileName:</Text>
           <View style={styles.buttonContainer}>
-            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
+            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editFileName} />
           </View>
         </View>
         <View style={styles.dataContainer}>
-          {isEditing ? (
-            <TextInput
+          {isEditingFile ? (
+            <TextInput 
               ref={inputRef}
               style={styles.input}
               value={fileNameText}
@@ -85,8 +94,8 @@ export default function TokensDetected({ route}) {
           ) : (
             <Text>{fileNameText}</Text>
           )}
-          {isEditing ? (
-            <TouchableOpacity onPress={editText}>
+          {isEditingFile ? (
+            <TouchableOpacity onPress={editFileName}>
               <Text>Edit</Text>
             </TouchableOpacity>
           ) : null}
@@ -94,18 +103,20 @@ export default function TokensDetected({ route}) {
       </View>
 
 
+
+
       <View>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Agenda:</Text>
           <View style={styles.buttonContainer}>
-            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
+            <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editAgenda} />
           </View>
         </View>
         <View style={styles.dataContainer}>
-          {isEditing ? (
+          {isEditingAgen ? (
             <TextInput
               ref={inputRef}
-              style={styles.input}
+              style={styles.dataContainer}
               value={agendaText}
               onChangeText={(newText) => setAgendaText(newText)}
               autoFocus
@@ -113,30 +124,19 @@ export default function TokensDetected({ route}) {
           ) : (
             <Text>{agendaText}</Text>
           )}
-          {isEditing ? (
-            <TouchableOpacity onPress={editText}>
+          {isEditingAgen ? (
+            <TouchableOpacity onPress={editAgenda}>
               <Text>Edit</Text>
             </TouchableOpacity>
           ) : null}
         </View>
       </View>
-
-
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Agenda:</Text>
-        <View style={styles.buttonContainer}>
-          <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editText} />
-        </View>
-      </View>
-      <View style={styles.dataContainer}>
-        <Text>{cleanedAgenda}</Text>
-      </View>
+    
 
       <View style={styles.nextIconContainer}>
         <Icon name="arrow-circle-o-right" size={100} color="black" />
       </View>
-
-
+    
     </Screen>
   );
 }
@@ -149,15 +149,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
     paddingVertical: 15,
+    
   },
+
   icon: {
     marginLeft: 'auto', 
     padding: 10,
   },
-  nextIconContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
+
   titleContainer: {
     alignItems: 'center', 
     backgroundColor: '#e0e0e0', 

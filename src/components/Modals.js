@@ -12,6 +12,9 @@ const styles= StyleSheet.create({
     justifyContent: "space-between",
     width: "80%"
   },
+  errorText: {
+    color: lightTheme.errorColor,
+  },
   imageCheckmark: {
     height: 114,
     width: 114
@@ -74,10 +77,12 @@ export function Alert(props) {
         <View style={styles.modal}>
           <Text style={styles.titleText}>{props.modalTitle}</Text>
           <Text style={styles.modalText}>{props.modalText}</Text>
-          <View style={styles.actionView}>
-            <Text style={styles.actionText} onPress={() => props.onConfirm(false)}>Cancel</Text>
-            <Text style={styles.actionText} onPress={() => props.onConfirm(true)}>OK</Text>
-          </View>
+          { props.isError ?
+            (<Text style={styles.errorText} onPress={() => props.onConfirm(false)}>OK</Text>) :
+            (<View style={styles.actionView}>
+              <Text style={styles.actionText} onPress={() => props.onConfirm(false)}>Cancel</Text>
+              <Text style={styles.actionText} onPress={() => props.onConfirm(true)}>OK</Text>
+            </View>) }
         </View>
       </View>
     </Modal>

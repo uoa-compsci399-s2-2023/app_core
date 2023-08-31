@@ -5,4 +5,5 @@ export const lightTheme = {
   controlOutline: "#8C8C8C",
   text: "#8C8C8C",
   accentColor: "#0078D4",
+  errorColor: "#fa3a40",
 };

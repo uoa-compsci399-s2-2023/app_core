@@ -3,6 +3,7 @@
 import 'react-native-url-polyfill/auto';
 import 'react-native-get-random-values';
 import React from "react";
+
 import registerRootComponent from "expo/build/launch/registerRootComponent";
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -19,9 +20,9 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false}}/>
-        <Stack.Screen name="Scan" component={Scan} />
-        <Stack.Screen name="Config" component={Config} />
-        <Stack.Screen name="ScanResult" component={ScanResult} />
+        <Stack.Screen name="Scan" component={Scan} options={{headerTitleAlign: 'center'}}/>
+        <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
+        <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -52,7 +52,7 @@ export default function Scan({ navigation }) {
       const scanModel = ScanModel.fromTextractResponse(textractResponse);
       setShowSpinner(false);
       this.camera.resumePreview();
-      navigation.navigate('ScanResult', {
+      navigation.navigate('Scan Result', {
         scannedText: scanModel.text,
       })
     }

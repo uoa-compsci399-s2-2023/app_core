@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Modal, StyleSheet, Text, TextInput, View} from "react-native";
+import {Image, Modal, StyleSheet, Text, TextInput, View} from "react-native";
 import {lightTheme} from "../Theme.js";
 
 const styles= StyleSheet.create({
@@ -11,6 +11,10 @@ const styles= StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "80%"
+  },
+  imageCheckmark: {
+    height: 114,
+    width: 114
   },
   modal: {
     alignItems: "center",
@@ -37,12 +41,24 @@ const styles= StyleSheet.create({
   },
   view: {
     alignItems: "center",
-    backgroundColor: lightTheme.backgroundFocused,
     display: "flex",
     height: "100%",
     justifyContent: "center",
     position: "absolute",
     width: "100%"
+  },
+  viewBackground: {
+    backgroundColor: lightTheme.backgroundFocused
+  },
+  viewCheckmark: {
+    alignItems: "center",
+    backgroundColor: lightTheme.backgroundAlt,
+    borderRadius: 14,
+    display: "flex",
+    height: 210,
+    justifyContent: "center",
+    position: "absolute",
+    width: 210
   }
 });
 
@@ -54,7 +70,7 @@ export function Alert(props) {
 
   return (
     <Modal animationType="fade" hardwareAccelerated={true} transparent={true}>
-      <View style={styles.view}>
+      <View style={[styles.view, styles.viewBackground]}>
         <View style={styles.modal}>
           <Text style={styles.titleText}>{props.modalTitle}</Text>
           <Text style={styles.modalText}>{props.modalText}</Text>
@@ -85,7 +101,7 @@ export function Textbox(props) {
 
   return (
     <Modal animationType="fade" hardwareAccelerated={true} transparent={true}>
-      <View style={styles.view}>
+      <View style={[styles.view, styles.viewBackground]}>
         <View style={styles.modal}>
           <Text style={styles.titleText}>{props.modalTitle}</Text>
           <TextInput style={styles.textInput} onChangeText={(currentText) => setText(currentText)} />
@@ -93,6 +109,23 @@ export function Textbox(props) {
             <Text style={styles.actionText} onPress={() => onConfirm(null)}>Cancel</Text>
             <Text style={styles.actionText} onPress={() => onConfirm(text)}>OK</Text>
           </View>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+export function Checkmark(props) {
+
+  if (!props.visible) {
+    return <View></View>;
+  }
+
+  return (
+    <Modal animationType="fade" hardwareAccelerated={true} transparent={true}>
+      <View style={[styles.view]}>
+        <View style={styles.viewCheckmark}>
+          <Image source={require("../../assets/icons/checkmark.png")} style={styles.imageCheckmark}/>
         </View>
       </View>
     </Modal>

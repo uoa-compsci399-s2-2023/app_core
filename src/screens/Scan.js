@@ -1,99 +1,146 @@
-import React, { useEffect, useState } from "react";
-import * as SecureStore from 'expo-secure-store';
-import { FontAwesome } from '@expo/vector-icons'; 
-import { View, StyleSheet, Pressable, Text, Button } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
-import { Buffer } from 'buffer';
-import Spinner from 'react-native-loading-spinner-overlay';
-import textract from '../textract';
-import ScanModel from '../models/Scan';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { Camera } from 'expo-camera';
 
-import { Screen } from "../components/Layout";
-
-export default function Scan({ navigation }) {
-  const [ awsAccessKeyId, setAwsAccessKeyId ] = useState('');
-  const [ awsSecretAccessKey, setAwsSecretAccessKey ] = useState('');
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+const CameraScreen = ({ navigation }) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [pictureCount, setPictureCount] = useState(0);
+  const [photos, setPhotos] = useState([]);
+  const cameraRef = useRef(null);
 
   useEffect(() => {
-    async function initializeCreds() {
-      const awsAccessKeyId = await SecureStore.getItemAsync('awsAccessKeyId');
-      const awsSecretAccessKey = await SecureStore.getItemAsync('awsSecretAccessKey');
-      setAwsAccessKeyId(awsAccessKeyId);
-      setAwsSecretAccessKey(awsSecretAccessKey);
-    }
-    initializeCreds();
-  }, [])
+    const requestCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+    requestCameraPermissions();
+  }, []);
 
-  if (!permission) {
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync();
+      console.log(photo);
+      setPictureCount(count => count + 1);
+      setPhotos(prevPhotos => [...prevPhotos, photo]);
+    }
+  };
+
+  const handleCancel = () => {
+    setPhotos([]); // Clear the photos array
+    setPictureCount(0); // Reset the counter
+  };
+
+  if (hasPermission === null) {
     return <View />;
   }
-
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
   }
 
-  async function takePicture() {
-    if (this.camera) {
-      setShowSpinner(true);
-      const data = await this.camera.takePictureAsync({ base64: true });
-      this.camera.pausePreview();
-      const imageByte = Buffer.from(data.base64, 'base64');
-      const textractResponse = await textract.detectDocumentText({
-        data: imageByte,
-        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
-      });
-      const scanModel = ScanModel.fromTextractResponse(textractResponse);
-      setShowSpinner(false);
-      this.camera.resumePreview();
-      navigation.navigate('ScanResult', {
-        scannedText: scanModel.text,
-      })
-    }
-  }
+  const windowWidth = Dimensions.get('window').width;
+  const aspectRatio = 4 / 3;
+
+  const canPressDone = photos.length > 0;
 
   return (
-    <Screen>
-      <Spinner
-        visible={showSpinner}
-        textContent={'Analysing...'}
-      />
-      <View style={styles.container}>
-        <Pressable style={styles.configIcon} onPress={() => navigation.navigate('Config')}>
-          <FontAwesome name="gear" size={40} color="black" />
-        </Pressable>
-        <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
-        <Button
-          style={styles.captureButton}
-          title="Capture"
-          onPress={takePicture}
+    <View style={styles.container}>
+      <View style={styles.header} />
+      <View style={styles.cameraContainer}>
+        <Camera
+          style={{
+            width: windowWidth,
+            height: windowWidth * aspectRatio,
+          }}
+          type={Camera.Constants.Type.back}
+          ref={cameraRef}
         />
       </View>
-    </Screen>
+      <View style={styles.captureFooter}>
+        <TouchableOpacity style={styles.captureButtonOuter} onPress={takePicture}>
+          <View style={styles.captureButtonInner}>
+            <View style={[styles.middleWhiteCircle]} />
+            <Text style={styles.pictureCountText}>{pictureCount}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonFooter}>
+        <TouchableOpacity style={styles.button} onPress={handleCancel}>
+          <Text style={styles.buttonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, !canPressDone]} onPress={() => navigation.navigate('FileExplorer', { photos })} disabled={!canPressDone}>
+          <Text style={styles.buttonText}>Done</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  camera: {
-    height: '80%',
-  },
-  captureButton: {
-    marginBottom: 40,
-    paddingBottom: 40,
-  },
-  configIcon: {
-    marginBottom: 20,
-    marginLeft: 20,
-    marginTop: 20,
-  },
   container: {
+    backgroundColor: 'rgb(61, 152, 154)',
     flex: 1,
+  },
+  header: {
+    backgroundColor: 'rgb(61, 152, 154)',
+    height: 50,
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  captureFooter: {
+    backgroundColor: 'rgb(61, 152, 154)',
+    flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    paddingBottom: 10,
+  },
+  captureButtonOuter: {
+    width: 75,
+    height: 75,
+    borderRadius: 40,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  captureButtonInner: {
+    width: 65,
+    height: 65,
+    borderRadius: 40,
+    backgroundColor: 'rgb(61, 152, 154)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  pictureCountText: {
+    color: '#000',
+    fontSize: 25,
+    position: 'absolute',
+  },
+  middleWhiteCircle: {
+    borderRadius: 999,
+    backgroundColor: '#fff',
+    width: 55,
+    height: 55,
+    position: 'absolute',
+  },
+  buttonFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: 'rgb(61, 152, 154)',
+    paddingBottom: 20,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
+
+export default CameraScreen;

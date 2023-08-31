@@ -11,6 +11,7 @@ import Login from "./screens/Login";
 import Scan from './screens/Scan';
 import Config from './screens/Config';
 import ScanResult from './screens/ScanResult';
+import FileExplorer from './screens/FileExplorer';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ function App() {
         <Stack.Screen name="Scan" component={Scan} />
         <Stack.Screen name="Config" component={Config} />
         <Stack.Screen name="ScanResult" component={ScanResult} />
+        <Stack.Screen name="FileExplorer" component={FileExplorer} />
       </Stack.Navigator>
     </NavigationContainer>
   );

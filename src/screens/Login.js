@@ -19,7 +19,7 @@ export default function Login({ navigation }) {
     <Screen>
       <View flexDirection='column' gap={20} style={styles.view}>
         {/* Todo: Use SVG instead of PNG, I couldn't get SVGs to work and gave up for now 😢. */}
-        <Image source={require("../../assets/logo/tabs.png")}/>
+        <Image source={require("../../assets/logo/tabs.png")} style={{width: 320, height: 130}}/>
         <LoginButton
           text="Sign in with Microsoft" 
           icon={require("../../assets/icons/microsoft.png")}
@@ -27,7 +27,7 @@ export default function Login({ navigation }) {
             navigation.navigate('Scan')
           }
         />
-        <LoginButton text="Sign in with Google" icon={require("../../assets/icons/google.png")}/>
+        <LoginButton text="Sign in with Google" icon={require("../../assets/icons/google.png")} onPress={() => navigation.navigate('FileExplorer')}/>
       </View>
     </Screen>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 
 const CameraScreen = ({ navigation }) => {
@@ -76,6 +76,51 @@ const CameraScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  button: {
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+  },
+  buttonFooter: {
+    alignItems: 'center',
+    backgroundColor: 'rgb(61, 152, 154)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  captureButtonInner: {
+    alignItems: 'center',
+    backgroundColor: 'rgb(61, 152, 154)',
+    borderRadius: 40,
+    height: 65,
+    justifyContent: 'center',
+    position: 'relative',
+    width: 65,
+  },
+  captureButtonOuter: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 40,
+    height: 75,
+    justifyContent: 'center',
+    width: 75,
+  },
+  captureFooter: {
+    alignItems: 'center',
+    backgroundColor: 'rgb(61, 152, 154)',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 0,
+    paddingBottom: 10,
+  },
   container: {
     backgroundColor: 'rgb(61, 152, 154)',
     flex: 1,
@@ -84,62 +129,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(61, 152, 154)',
     height: 50,
   },
-  cameraContainer: {
-    flex: 1,
-  },
-  captureFooter: {
-    backgroundColor: 'rgb(61, 152, 154)',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 0,
-    paddingBottom: 10,
-  },
-  captureButtonOuter: {
-    width: 75,
-    height: 75,
-    borderRadius: 40,
+  middleWhiteCircle: {
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButtonInner: {
-    width: 65,
-    height: 65,
-    borderRadius: 40,
-    backgroundColor: 'rgb(61, 152, 154)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    borderRadius: 999,
+    height: 55,
+    position: 'absolute',
+    width: 55,
   },
   pictureCountText: {
     color: '#000',
     fontSize: 25,
     position: 'absolute',
-  },
-  middleWhiteCircle: {
-    borderRadius: 999,
-    backgroundColor: '#fff',
-    width: 55,
-    height: 55,
-    position: 'absolute',
-  },
-  buttonFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: 'rgb(61, 152, 154)',
-    paddingBottom: 20,
-  },
-  button: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
   },
 });
 

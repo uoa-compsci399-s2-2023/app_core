@@ -20,30 +20,30 @@ const ImagePopup = ({ visible, imageUri, onCancel, onRetake }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: '80%',
-    height: '80%',
-    resizeMode: 'contain',
+  button: {
+    backgroundColor: 'rgb(0, 120, 212)',
+    borderRadius: 5,
+    marginHorizontal: 20,
+    padding: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 20,
   },
-  button: {
-    marginHorizontal: 20,
-    padding: 10,
-    backgroundColor: 'rgb(0, 120, 212)',
-    borderRadius: 5,
-  },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  container: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  image: {
+    height: '80%',
+    resizeMode: 'contain',
+    width: '80%',
   },
 });
 

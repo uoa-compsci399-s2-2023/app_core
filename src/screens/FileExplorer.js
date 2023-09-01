@@ -87,89 +87,89 @@ const FileExplorer = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'space-between',
-    },
-    scrollContainer: {
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-    },
-    thumbnailRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 10,
-    },
-    thumbnailContainer: {
-      width: '49%', // Display 2 thumbnails per row with a small gap between them
-      aspectRatio: 1,
-      padding: 5,
-    },
-    thumbnail: {
-      width: '100%',
-      height: '100%',
-      resizeMode: 'cover',
-      borderRadius: 10,
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        paddingTop: 10,
-    },
-    button: {
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        backgroundColor: "rgb(61, 152, 154)",
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    imagePopupContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      },
-      imagePopupBackground: {
-        width: '80%',
-        height: '60%',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        overflow: 'hidden',
-      },
-      imagePopupContent: {
-        flex: 1,
-      },
-      imagePopup: {
-        width: '100%',
-        height: '90%',
-      },
-      imagePopupButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingTop: 10,
-        paddingHorizontal: 20,
-        borderTopColor: 'rgba(0, 0, 0, 0.2)',
-      },
-      popupButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
-        paddingVertical: 5,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        backgroundColor: 'rgb(61, 152, 154)',
-      },
-  });
+  button: {
+    backgroundColor: "rgb(61, 152, 154)",
+    borderRadius: 5,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  footer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  imagePopup: {
+    height: '90%',
+    width: '100%',
+  },
+  imagePopupBackground: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    height: '60%',
+    overflow: 'hidden',
+    width: '80%',
+  },
+  imagePopupButtons: {
+    borderTopColor: 'rgba(0, 0, 0, 0.2)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  imagePopupContainer: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    bottom: 0,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  imagePopupContent: {
+    flex: 1,
+  },
+  popupButtonText: {
+    backgroundColor: 'rgb(61, 152, 154)',
+    borderRadius: 5,
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+  },
+  scrollContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  thumbnail: {
+    borderRadius: 10,
+    height: '100%',
+    resizeMode: 'cover',
+    width: '100%',
+  },
+  thumbnailContainer: {
+    aspectRatio: 1,
+    padding: 5,
+    width: '49%', // Display 2 thumbnails per row with a small gap between them
+  },
+  thumbnailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+});
 
 export default FileExplorer;

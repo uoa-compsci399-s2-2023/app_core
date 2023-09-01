@@ -7,19 +7,23 @@ import { Screen } from "../components/Layout";
 export default function Login({ navigation }) {
 
   const styles = StyleSheet.create({
+    Microsoft: {
+      height: 130,
+      width: 320
+    },
     view: {
       alignItems: "center",
       height: "100%",
       justifyContent: "center",
       width: "100%",
-    }
+    },
   });
 
   return (
     <Screen>
       <View flexDirection='column' gap={20} style={styles.view}>
         {/* Todo: Use SVG instead of PNG, I couldn't get SVGs to work and gave up for now 😢. */}
-        <Image source={require("../../assets/logo/tabs.png")} style={{width: 320, height: 130}}/>
+        <Image source={require("../../assets/logo/tabs.png")} style={styles.Microsoft}/>
         <LoginButton
           text="Sign in with Microsoft" 
           icon={require("../../assets/icons/microsoft.png")}

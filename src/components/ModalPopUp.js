@@ -7,8 +7,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from 'react-native';
 
 const ModalPopUp = ({ visible, setVisible }) => {
@@ -62,7 +60,7 @@ const ModalPopUp = ({ visible, setVisible }) => {
                 />
               ) : (
                 <View style={styles.editRow}>
-                  <Text style={[styles.editText, { color: 'black' }]}>
+                  <Text style={[styles.editText, styles.FileName]}>
                     {editedFileName || fileName}
                   </Text>
                   <TouchableOpacity onPress={handleEditButtonPress}>
@@ -87,101 +85,104 @@ const ModalPopUp = ({ visible, setVisible }) => {
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '80%',
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    elevation: 20,
-  },
-  modalContent: {
-    alignItems: 'center',
-  },
-  header: {
-    width: '100%',
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomColor: 'black',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  headerText: {
-    color: 'rgb(61, 152, 154)',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  folderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomColor: 'black',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  folderText: {
-    flex: 1,
+  FileName: {
+    color: 'black',
   },
   arrowImage: {
     height: 20,
     width: 20,
   },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomColor: 'black',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  button: {
     alignItems: 'center',
-  },
-  infoText: {
+    borderRadius: 5,
     flex: 1,
-  },
-  editText: {
-    color: 'rgb(61, 152, 154)',
-    marginLeft: 10,
+    paddingVertical: 10,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 15,
     paddingHorizontal: 20,
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  cancelButton: {
-    backgroundColor: 'rgb(61, 152, 154)',
-    marginRight: 10,
-  },
-  saveButton: {
-    backgroundColor: 'rgb(61, 152, 154)',
-    marginLeft: 10,
+    paddingTop: 15,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
   },
-  editTextInput: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 5,
-    borderRadius: 5,
-  },
-  editRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  cancelButton: {
+    backgroundColor: 'rgb(61, 152, 154)',
+    marginRight: 10,
   },
   editButton: {
     color: 'rgb(61, 152, 154)',
+    marginLeft: 10,
+  },
+  editRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  editText: {
+    color: 'rgb(61, 152, 154)',
+    marginLeft: 10,
+  },
+  editTextInput: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 5,
+    flex: 1,
+    padding: 5,
+  },
+  folderRow: {
+    borderBottomColor: 'black',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  folderText: {
+    flex: 1,
+  },
+  header: {
+    alignItems: 'center',
+    borderBottomColor: 'black',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    height: 30,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  headerText: {
+    color: 'rgb(61, 152, 154)',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  infoRow: {
+    alignItems: 'center',
+    borderBottomColor: 'black',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  infoText: {
+    flex: 1,
+  },
+  modalBackground: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    elevation: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    width: '80%',
+  },
+  modalContent: {
+    alignItems: 'center',
+  },
+  saveButton: {
+    backgroundColor: 'rgb(61, 152, 154)',
     marginLeft: 10,
   },
 });

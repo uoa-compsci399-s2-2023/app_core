@@ -23,7 +23,7 @@ export default function Login({ navigation}) {
   const [request,, promptAsync] = useAuthRequest(
     {
       clientId,
-      scopes: ['openid', 'profile', 'email', 'offline_access', 'files.readwrite'],
+      scopes: ['openid', 'profile', 'email', 'offline_access', 'files.readwrite', 'tasks.readwrite'],
       redirectUri,
     },
     discovery,

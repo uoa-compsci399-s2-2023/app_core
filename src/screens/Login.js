@@ -23,24 +23,13 @@ export default function Login({ navigation}) {
   const [request,, promptAsync] = useAuthRequest(
     {
       clientId,
-      scopes: ['User.Read','openid', 'profile', 'email', 'offline_access'],
+      scopes: ['openid', 'profile', 'email', 'offline_access', 'files.readwrite'],
       redirectUri,
     },
     discovery,
   );
 
-  const [accessToken, setAccessToken] = React.useState(String|null);
-
-  React.useEffect(() => {
-    async function currentAccessToken() {
-      const accessToken  = await SecureStore.getItemAsync('accessToken');
-      setAccessToken(accessToken);
-    }
-    currentAccessToken()
-  }, [])
-
   const saveAccessToken = async (accessToken) => {
-    setAccessToken(accessToken);
     await SecureStore.setItemAsync('accessToken', accessToken);
   }
 
@@ -66,8 +55,7 @@ export default function Login({ navigation}) {
                   },
                   discovery,
                 ).then((res) => {
-                  setAccessToken(res.accessToken); //has refresh token in res
-                  saveAccessToken(accessToken);
+                  saveAccessToken(res.accessToken);
                   navigation.navigate('Scan')
                 });
               }

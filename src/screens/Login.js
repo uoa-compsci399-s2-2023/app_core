@@ -2,7 +2,7 @@ import * as React from "react";
 import * as SecureStore from 'expo-secure-store';
 import { View, Image, StyleSheet} from "react-native";
 import {LoginButton} from "../components/Buttons";
-import { Screen } from "../components/Layout";
+import {Screen} from "../components/Layout";
 
 import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";
 

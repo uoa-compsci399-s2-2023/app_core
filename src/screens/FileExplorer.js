@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 import ModalPopUp from '../components/ModalPopUp'; // Adjust the import path based on your project structure
 
 const FileExplorer = ({ route, navigation }) => {
@@ -13,6 +20,17 @@ const FileExplorer = ({ route, navigation }) => {
 
   const handleCancel = () => {
     navigation.navigate('Scan');
+  };
+
+  const handleRetake = () => {
+    navigation.navigate('CameraScreen', {
+      onPhotoCapture: handlePhotoCapture, // Pass the callback function
+    });
+  };
+
+  // Callback function to update the selected photo
+  const handlePhotoCapture = (photo) => {
+    setSelectedPhotoUri(photo.uri); // Update the selected photo URI
   };
 
   const renderThumbnails = () => {
@@ -69,11 +87,11 @@ const FileExplorer = ({ route, navigation }) => {
                   style={styles.popupButton}
                   onPress={() => setSelectedPhotoUri(null)}
                 >
-                  <Text style={styles.popupButtonText}>Cancel</Text>
+                  <Text style={styles.popupButtonText}>Close</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.popupButton}
-                  onPress={() => setSelectedPhotoUri(null)}
+                  onPress={handleRetake}
                 >
                   <Text style={styles.popupButtonText}>Retake</Text>
                 </TouchableOpacity>

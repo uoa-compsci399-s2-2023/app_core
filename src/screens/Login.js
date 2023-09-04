@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SecureStore from 'expo-secure-store';
-import { View, Image, StyleSheet} from "react-native";
+import {View, Image, StyleSheet, Text} from "react-native";
 import {LoginButton} from "../components/Buttons";
 import {Screen} from "../components/Layout";
 
@@ -66,12 +66,19 @@ export default function Login({ navigation}) {
           onPress={() =>
             navigation.navigate('Scan')
           }/>
+        <Text style={styles.text} onPress={() => navigation.navigate('Config')}>{"Options (temp)"}</Text>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  // Temporary style for options text, this is only used to store
+  text: {
+    color: "#D0D0D0",
+    fontSize: 24,
+    fontWeight: "bold"
+  },
   view: {
     alignItems: "center",
     height: "100%",

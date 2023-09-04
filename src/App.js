@@ -23,8 +23,8 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Scan" component={Scan} options={{ headerTitleAlign: 'center' }} />
+        <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
+        <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}}/>
         <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="TokensDetected" component={TokensDetected} />

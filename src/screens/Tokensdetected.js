@@ -16,21 +16,8 @@ export default function TokensDetected({ route}) {
   let cleanedTitle = "";
   let cleanedAgenda = "";
   let cleanedDate = "";
+
  
-  //have a list of task that extracted from the data where task will have # at the beginning and add the due datew to the task list start with @ 
-  let task = [];
-  const taskIndex = fileName.findIndex(element => element.includes("#"));
-  if (taskIndex !== -1) {
-    task = fileName.slice(taskIndex);
-  }
-
-  const taskList = task.map((item) => {
-    // Replace "@" with "Due at:"
-    const formattedItem = item.replace('@', 'Due at:');
-    return formattedItem.substr(1).trim();
-  });
-
-
 
   
 
@@ -39,11 +26,10 @@ export default function TokensDetected({ route}) {
   const date = fileName.findIndex(element => element.includes("@"));
   
   if (title) {
-    const colonIndex = title.indexOf(":");
-    if (colonIndex !== -1) {
-      cleanedTitle = title.substring(colonIndex + 1).trim();
-    }
+    cleanedTitle = title.substr(6).trim().replace(":", "");
   }
+
+
 
   if (folder !== -1 && date !== -1 && date > folder) {
     const agendaElements = fileName.slice(folder + 1, date);
@@ -57,10 +43,24 @@ export default function TokensDetected({ route}) {
 
   const [isEditingFile, setIsEditingFIle] = useState(false);
   const [isEditingAgen, setIsEditingAgen] = useState(false);
+  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
+  const [editedTaskContent, setEditedTaskContent] = useState('');
   const [fileNameText, setText] = useState(cleanedTitle + "-" + cleanedDate ); 
   const [agendaText, setAgendaText] = useState(cleanedAgenda);
 
-  const saveText = () => {
+
+
+  //list of task that extracted from the data where task will have # at the beginning and add the due date to the task list start with @ 
+  let task = [];
+  const taskIndex = fileName.findIndex(element => element.includes("#"));
+  if (taskIndex !== -1) {
+    task = fileName.slice(taskIndex);
+  }
+  
+  // Replace "@" with "Due at:"
+  const [taskList, setTaskList] = useState(task.map((item) => item.substr(1).trim().replace("@", "Due at: ")));
+
+  const saveText = () => { ///to finsh when we decide what to pass over 
     if (inputRef.current) {
       setText(inputRef.current.value);
     }
@@ -78,6 +78,18 @@ export default function TokensDetected({ route}) {
     setIsEditingAgen(!isEditingAgen);
   }
 
+  const toggleEditTask = (index, initialContent) => {
+    if (index === editingTaskIndex) {
+      const updatedTaskList = [...taskList];
+      updatedTaskList[index] = `#${editedTaskContent}`;
+      setTaskList(updatedTaskList); // Update the state with the edited task
+      setEditingTaskIndex(null); // Exit edit mode
+    } else {
+      // Enter edit mode for the selected task
+      setEditedTaskContent(initialContent);
+      setEditingTaskIndex(index);
+    }
+  };
  
   return (
     <Screen>
@@ -152,11 +164,11 @@ export default function TokensDetected({ route}) {
         </View>
 
 
+
         <View>
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Task:</Text>
             <View style={styles.buttonContainer}>
-              <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editTask} />
             </View>
           </View>
           <View style={styles.dataContainer}>
@@ -164,38 +176,57 @@ export default function TokensDetected({ route}) {
             {taskList.length > 0 ? (
             // Display the task list
               taskList.map((item, index) => {
+              /// get due date to calculate in the text after the @
+                const dueDate = item.split('Due at:')[1];
 
-                //  format  "DD-MM-YYYY":
-                const dueDate = item.match(/\d{2}-\d{2}-\d{4}/);
-                const formattedDueDate = dueDate;
-
-                
                 // Calculate the time difference between now and the due date
                 const currentDate = Date.now();
-                const taskDueDate = new Date(currentDate);
-                const dateOk = dueDate;
+                const taskDueDate = new Date(dueDate);
 
-                const timeDifferenceInDays = Math.floor((formattedDueDate + 1));// / (1000 * 60 * 60 * 24));
+                const timeDifferenceInDays = Math.floor(
+                  (taskDueDate - currentDate) / (1000 * 60 * 60 * 24)
+                );
                 let indicatorColor = 'green';
                 if (timeDifferenceInDays >= 1 && timeDifferenceInDays <= 2) {
                   indicatorColor = 'red';
-                }
-                else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
+                } else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
                   indicatorColor = 'orange';
-                ///else if there no due date or cant find due date auto set due date to 7 days 
-                } else if (timeDifferenceInDays >= 6 && timeDifferenceInDays <= 7 || timeDifferenceInDays === undefined || timeDifferenceInDays === null || timeDifferenceInDays < 0) {
+                ///else if there no due date or cant find due date auto set due date to 7 days
+                } else if (
+                  timeDifferenceInDays >= 6 &&
+                (timeDifferenceInDays === undefined ||
+                  timeDifferenceInDays === null ||
+                  timeDifferenceInDays < 0)
+                ) {
                   indicatorColor = 'green';
-
                 }
                 return (
                   <View key={index} style={styles.taskContainer}>
+                    <View style={styles.taskIndicatorContainer}>
+                      <View
+                        style={[styles.taskIndicator, { backgroundColor: indicatorColor }]}
+                      ></View>
+                      <Text style={styles.taskIndicatorText}>{timeDifferenceInDays} days</Text>
+                      <Icon name="edit" size={25} color="black" style={styles.iconTask} onPress={() => toggleEditTask(index, item)} />
+                    </View>
                     <View style={styles.taskTitleContainer}>
-                      <Text style={styles.taskTitleText}>{item}</Text>
-                      <View style={styles.taskIndicatorContainer}>
-                        <View style={[styles.taskIndicator, {backgroundColor: indicatorColor}]}></View>
-
-                        <Text style={styles.taskIndicatorText}>{timeDifferenceInDays} days</Text>
-                      </View>
+                      {editingTaskIndex === index ? (
+                      // Edit mode: Show an editable input field
+                        <TextInput
+                          style={styles.taskTitleText}
+                          value={editedTaskContent}
+                          onChangeText={setEditedTaskContent}
+                          onBlur={() => toggleEditTask(index, item)}
+                          multiline
+                          autoFocus
+                        />
+                      ) : (
+                      // Display task text, make it clickable to enter edit mode
+                        <TouchableOpacity onPress={() => toggleEditTask(index, item)}>
+                          <Text style={styles.taskTitleText}>{item}</Text>
+                        </TouchableOpacity>
+                      )}
+                      
                     </View>
                   </View>
                 );
@@ -204,9 +235,9 @@ export default function TokensDetected({ route}) {
             // Display a message if there are no tasks
               <Text>No tasks found</Text>
             )}
+
           </View>
         </View>
-
         <View style={styles.nextIconContainer}>
           <Icon name="arrow-circle-o-right" size={100} color="black" />
         </View>
@@ -230,10 +261,19 @@ const styles = StyleSheet.create({
 
   icon: {
     marginLeft: 'auto', 
-    padding: 10,
+    marginTop: 10,
+
   },
 
-  
+  iconTask: {
+    marginLeft: 'auto',
+  },
+
+  nextIconContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+
   taskContainer: {
     backgroundColor: '#ffffff',
     borderRadius: 10,
@@ -255,6 +295,7 @@ const styles = StyleSheet.create({
   taskIndicatorText: {
     color: 'gray',
     fontSize: 12,
+    
   },
   taskTitleContainer: {
     alignItems: 'center',
@@ -283,6 +324,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 10,
   },
+
 });
   
 

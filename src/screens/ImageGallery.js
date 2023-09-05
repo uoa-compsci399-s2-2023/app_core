@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React, { useState } from 'react'
 import { usePhoto } from '../ImageContext';
 import GeneralButton from '../components/GeneralButton';
@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 const ImageGallery = () => {
   const navigation = useNavigation();
   const [selectedPhotoUri, setSelectedPhotoUri] = useState(null); 
-  const { capturedPhotos, setCapturedPhotos } = usePhoto(); 
+  const { capturedPhotos } = usePhoto(); 
 
   const handleRetake = () => {
     navigation.navigate('CameraScreen', { selectedPhotoUri });
@@ -72,6 +72,21 @@ const ImageGallery = () => {
 export default ImageGallery
 
 const styles = StyleSheet.create({
+  buttonFooter: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  scrollContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
   thumbnail: {
     borderRadius: 10,
     height: '100%',
@@ -87,20 +102,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
-  },
-  buttonFooter: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  scrollContainer: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
   },
 })

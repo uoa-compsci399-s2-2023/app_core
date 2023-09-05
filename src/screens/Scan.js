@@ -11,43 +11,43 @@ const Scan = ({ navigation }) => {
   const [pictureCount, setPictureCount] = useState(0);
   const { capturedPhotos, setCapturedPhotos } = usePhoto(); 
 
-useEffect(() => {
-  (async () => {
+  useEffect(() => {
+    (async () => {
     //Getting permissions for accessing camera
-    const cameraStatus = await Camera.requestCameraPermissionsAsync();
-    setHasCameraPermission(cameraStatus.status === 'granted')
-  })();
-}, [])
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(cameraStatus.status === 'granted')
+    })();
+  }, [])
 
-const takePicture = async () => {
-  if(cameraRef) {
-    try{
-      const data = await cameraRef.current.takePictureAsync();
-      console.log(data);
-      setPictureCount(pictureCount => pictureCount + 1)
-      const updatedPhotos = [...capturedPhotos, data]; // Add the new photo to the existing list
-      setCapturedPhotos(updatedPhotos); 
-    } catch(e) {
-      console.log(e);
+  const takePicture = async () => {
+    if(cameraRef) {
+      try{
+        const data = await cameraRef.current.takePictureAsync();
+        console.log(data);
+        setPictureCount(pictureCount => pictureCount + 1)
+        const updatedPhotos = [...capturedPhotos, data]; // Add the new photo to the existing list
+        setCapturedPhotos(updatedPhotos); 
+      } catch(e) {
+        console.log(e);
+      }
     }
   }
-}
 
-const handleCancel = () => {
-  setPictureCount(0); // Reset the counter
-  setCapturedPhotos([]);
-};
+  const handleCancel = () => {
+    setPictureCount(0); // Reset the counter
+    setCapturedPhotos([]);
+  };
 
-const handleDone = () => {
-  console.log(capturedPhotos);
-  if ( pictureCount > 0 ) {
-    navigation.navigate('ImageGallery');
+  const handleDone = () => {
+    console.log(capturedPhotos);
+    if ( pictureCount > 0 ) {
+      navigation.navigate('ImageGallery');
+    }
   }
-}
 
-if(hasCameraPermission === false) {
-  return <Text>No access to Camera</Text>
-}
+  if(hasCameraPermission === false) {
+    return <Text>No access to Camera</Text>
+  }
   return (
     <View style={styles.container}>
       <View style={styles.cameraContainer}>
@@ -67,22 +67,21 @@ if(hasCameraPermission === false) {
 export default Scan
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgb(61, 152, 154)',
-    justifyContent: 'center',
-  },
-  camera: {
-    borderRadius: 20,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * (4/3),
-  },
   buttonFooter: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 15,
     paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  camera: {
+    borderRadius: 20,
+    height: Dimensions.get('window').width * (4/3),
+    width: Dimensions.get('window').width,
+  },
+  cameraContainer: {
+    flex: 1,
+    paddingTop: 50,
   },
   captureContainer: {
     alignItems: 'center',
@@ -90,8 +89,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 20,
   },
-  cameraContainer: {
+  container: {
+    backgroundColor: 'rgb(61, 152, 154)',
     flex: 1,
-    paddingTop: 50,
+    justifyContent: 'center',
   },
 })

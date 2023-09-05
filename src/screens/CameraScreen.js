@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import React, { useRef } from 'react';
 import { Camera } from 'expo-camera';
 import GeneralButton from '../components/GeneralButton';
 import CaptureButton from '../components/CaptureButton';
@@ -12,36 +12,36 @@ const CameraScreen = ({ navigation }) => {
   const route = useRoute();
   const selectedPhotoUri = route.params.selectedPhotoUri;
 
-const takePicture = async () => {
-  if(cameraRef) {
-    try{
-      console.log(selectedPhotoUri);
-      const data = await cameraRef.current.takePictureAsync();
-      console.log(data);
+  const takePicture = async () => {
+    if(cameraRef) {
+      try{
+        console.log(selectedPhotoUri);
+        const data = await cameraRef.current.takePictureAsync();
+        console.log(data);
 
-      // Create a copy of the capturedPhotos array
-      const updatedPhotos = [...capturedPhotos];
+        // Create a copy of the capturedPhotos array
+        const updatedPhotos = [...capturedPhotos];
 
-      // Find the index of the photo with the matching URI
-      const photoIndex = updatedPhotos.findIndex(photo => photo.uri === selectedPhotoUri);
+        // Find the index of the photo with the matching URI
+        const photoIndex = updatedPhotos.findIndex(photo => photo.uri === selectedPhotoUri);
 
-      if (photoIndex !== -1) {
+        if (photoIndex !== -1) {
         // Replace the photo with the matching URI
-        updatedPhotos[photoIndex] = data;
-      }
+          updatedPhotos[photoIndex] = data;
+        }
 
-      setCapturedPhotos(updatedPhotos);
-      navigation.navigate('ImageGallery');
-    } catch(e) {
-      console.log(e);
+        setCapturedPhotos(updatedPhotos);
+        navigation.navigate('ImageGallery');
+      } catch(e) {
+        console.log(e);
+      }
     }
   }
-}
 
-const handleCancel = () => {
-  console.log("Cancel");
-  navigation.navigate('ImageGallery');
-}
+  const handleCancel = () => {
+    console.log("Cancel");
+    navigation.navigate('ImageGallery');
+  }
 
   return (
     <View style={styles.container}>
@@ -61,22 +61,21 @@ const handleCancel = () => {
 export default CameraScreen
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgb(61, 152, 154)',
-    justifyContent: 'center',
-  },
-  camera: {
-    borderRadius: 20,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * (4/3),
-  },
   buttonFooter: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: 15,
     paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  camera: {
+    borderRadius: 20,
+    height: Dimensions.get('window').width * (4/3),
+    width: Dimensions.get('window').width,
+  },
+  cameraContainer: {
+    flex: 1,
+    paddingTop: 50,
   },
   captureContainer: {
     alignItems: 'center',
@@ -84,8 +83,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 20,
   },
-  cameraContainer: {
+  container: {
+    backgroundColor: 'rgb(61, 152, 154)',
     flex: 1,
-    paddingTop: 50,
+    justifyContent: 'center',
   },
 })

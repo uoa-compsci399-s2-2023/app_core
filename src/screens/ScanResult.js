@@ -51,18 +51,17 @@ export default function ScanResult({ route, navigation }) {
             </ScrollView>   
           </KeyboardAvoidingView>
         )}
-
-        {!editing && (
-          // TODO: Navigates to Next Screen. Temp fill
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Scan')}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Confirm Scan</Text>
-          </TouchableOpacity>
-        )}
-
       </View>
+
+      {!editing && (
+        // TODO: Navigates to Next Screen. Temp fill
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Scan')}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Confirm Scan</Text>
+        </TouchableOpacity>
+      )}
     </Screen>
   );
 }

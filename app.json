@@ -6,13 +6,15 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "exp",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "**/*",
+      "assets/**"
     ],
     "ios": {
       "supportsTablet": true,
@@ -21,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#3F989A"
       },
       "package": "io.expo.app.core"
     },
@@ -30,6 +32,9 @@
         "projectId": "48dc15e1-ee84-4fc2-987b-80d7bc6801d4"
       }
     },
-    "owner": "team-9"
+    "owner": "team-9",
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

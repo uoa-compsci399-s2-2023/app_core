@@ -72,7 +72,6 @@ export default function ScanResult({ route, navigation }) {
 
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
 
   button: {
     alignItems: 'center',
@@ -108,18 +107,3 @@ const styles = StyleSheet.create({
   },
 
 });
-=======
-  captureButton: {
-    marginBottom: 40,
-    paddingBottom: 40,
-  },
-
-  titleText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-
-
-});
->>>>>>> 255a49f (Added Tokenddetected pages for FileName and Agenda)

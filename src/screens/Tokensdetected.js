@@ -56,12 +56,14 @@ export default function TokensDetected({ route}) {
 
 
 
-  //list of task that extracted from the data where task will have # at the beginning and add the due date to the task list start with @ 
+  //list of all thew tasks that extracted from the data where task will have # at the beginning 
   let task = [];
-  const taskIndex = fileName.findIndex(element => element.includes("#"));
-  if (taskIndex !== -1) {
-    task = fileName.slice(taskIndex);
+  for (let i = 0; i < fileName.length; i++) {
+    if (fileName[i].charAt(0) === "#") {
+      task.push(fileName[i]);
+    }
   }
+  
   
   // Replace "@" with "Due at:"
   const [taskList, setTaskList] = useState(task.map((item) => item.substr(1).trim().replace("@", "Due at: ")));

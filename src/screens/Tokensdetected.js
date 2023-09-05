@@ -24,6 +24,9 @@ export default function TokensDetected({ route}) {
   const title = fileName.find(element => element.includes("Title"));
   const folder = fileName.findIndex(element => element.includes("Folder"));
   const date = fileName.findIndex(element => element.includes("@"));
+
+  // Date extraction checkpoint
+  console.log("Extracted date: ", date);
   
   if (title) {
     cleanedTitle = title.substr(6).trim().replace(":", "");
@@ -39,6 +42,9 @@ export default function TokensDetected({ route}) {
   if (date !== -1) {
     const dateElement = fileName[date];
     cleanedDate = dateElement.substr(1).trim(); 
+
+    // Checkpoint cleaned Date
+    console.log("Cleaned date: ", cleanedDate);
   }
 
   const [isEditingFile, setIsEditingFIle] = useState(false);
@@ -59,6 +65,9 @@ export default function TokensDetected({ route}) {
   
   // Replace "@" with "Due at:"
   const [taskList, setTaskList] = useState(task.map((item) => item.substr(1).trim().replace("@", "Due at: ")));
+
+  // Checkpoint TaskList
+  console.log("TaskList: ", taskList);
 
   const saveText = () => { ///to finsh when we decide what to pass over 
     if (inputRef.current) {
@@ -163,8 +172,7 @@ export default function TokensDetected({ route}) {
           </View>
         </View>
 
-
-
+        {/* Container with Issue START */}
         <View>
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Task:</Text>
@@ -177,29 +185,36 @@ export default function TokensDetected({ route}) {
             // Display the task list
               taskList.map((item, index) => {
               /// get due date to calculate in the text after the @
-                const dueDate = item.split('Due at:')[1];
+                const rawDueDate = item.split('Due at:')[1];
+                
+                // rawDueDate is undefined. Issue is somewhere above? Or extracted Date is undefine i.e. Textract + handwriting issue
+                console.log("rawDueDate: ", rawDueDate);
+
+                const dueDateParts = rawDueDate.split('/'); // Split the date string by '/'
+                const day = parseInt(dueDateParts[0], 10); // Parse day as an integer
+                const month = parseInt(dueDateParts[1], 10) - 1; // Parse month (subtract 1 as months are zero-based)
+                const year = parseInt(dueDateParts[2], 10); // Parse year
+                const taskDueDate = new Date(year, month, day);
 
                 // Calculate the time difference between now and the due date
                 const currentDate = Date.now();
-                const taskDueDate = new Date(dueDate);
 
+                console.log("TaskDueDate: ", taskDueDate);
+                console.log("Current: ", currentDate);
+                
                 const timeDifferenceInDays = Math.floor(
                   (taskDueDate - currentDate) / (1000 * 60 * 60 * 24)
                 );
+
+                // Indicator 
                 let indicatorColor = 'green';
                 if (timeDifferenceInDays >= 1 && timeDifferenceInDays <= 2) {
                   indicatorColor = 'red';
                 } else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
                   indicatorColor = 'orange';
-                ///else if there no due date or cant find due date auto set due date to 7 days
-                } else if (
-                  timeDifferenceInDays >= 6 &&
-                (timeDifferenceInDays === undefined ||
-                  timeDifferenceInDays === null ||
-                  timeDifferenceInDays < 0)
-                ) {
-                  indicatorColor = 'green';
                 }
+                ///else if there no due date or cant find due date auto set due date to 7 days -> green
+
                 return (
                   <View key={index} style={styles.taskContainer}>
                     <View style={styles.taskIndicatorContainer}>
@@ -238,6 +253,11 @@ export default function TokensDetected({ route}) {
 
           </View>
         </View>
+
+
+        
+        {/* Container with Issue END  */}
+
         <View style={styles.nextIconContainer}>
           <Icon name="arrow-circle-o-right" size={100} color="black" />
         </View>

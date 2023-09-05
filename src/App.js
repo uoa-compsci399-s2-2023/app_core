@@ -6,12 +6,13 @@ import React from "react";
 import registerRootComponent from "expo/build/launch/registerRootComponent";
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { ImageProvider } from './ImageContext';
 
 import Login from "./screens/Login";
 import Scan from './screens/Scan';
 import Config from './screens/Config';
 import ScanResult from './screens/ScanResult';
-import FileExplorer from './screens/FileExplorer';
+import ImageGallery from './screens/ImageGallery';
 import CameraScreen from './screens/CameraScreen';
 
 const Stack = createNativeStackNavigator();
@@ -19,14 +20,16 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false}}/>
-        <Stack.Screen name="Scan" component={Scan} />
-        <Stack.Screen name="Config" component={Config} />
-        <Stack.Screen name="ScanResult" component={ScanResult} />
-        <Stack.Screen name="FileExplorer" component={FileExplorer} />
-        <Stack.Screen name="CameraScreen" component={CameraScreen} />
-      </Stack.Navigator>
+      <ImageProvider>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false}}/>
+          <Stack.Screen name="Scan" component={Scan} />
+          <Stack.Screen name="Config" component={Config} />
+          <Stack.Screen name="ScanResult" component={ScanResult} />
+          <Stack.Screen name="ImageGallery" component={ImageGallery} />
+          <Stack.Screen name="CameraScreen" component={CameraScreen} />
+        </Stack.Navigator>
+      </ImageProvider>
     </NavigationContainer>
   );
 }

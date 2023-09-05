@@ -1,50 +1,80 @@
 import React from 'react';
-import { View, Modal, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Image, Text } from 'react-native';
 
-const ImagePopup = ({ visible, imageUri, onCancel, onRetake }) => {
+const ImagePopup = ({ selectedPhotoUri, setSelectedPhotoUri, handleRetake }) => {
+  if (!selectedPhotoUri) {
+    return null;
+  }
+
   return (
-    <Modal animationType="slide" transparent={true} visible={visible}>
-      <View style={styles.container}>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onCancel}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={onRetake}>
-            <Text style={styles.buttonText}>Retake</Text>
-          </TouchableOpacity>
+    <View style={styles.imagePopupContainer}>
+      <TouchableOpacity
+        style={styles.imagePopupBackground}
+        onPress={() => setSelectedPhotoUri(null)}
+      >
+        <View style={styles.imagePopupContent}>
+          <Image source={{ uri: selectedPhotoUri }} style={styles.imagePopup} />
+          <View style={styles.imagePopupButtons}>
+            <TouchableOpacity
+              style={styles.popupButton}
+              onPress={() => setSelectedPhotoUri(null)}
+            >
+              <Text style={styles.popupButtonText}>Close</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.popupButton}
+              onPress={handleRetake}
+            >
+              <Text style={styles.popupButtonText}>Retake</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </Modal>
+      </TouchableOpacity>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: 'rgb(0, 120, 212)',
-    borderRadius: 5,
-    marginHorizontal: 20,
-    padding: 10,
+const styles = {
+  imagePopup: {
+    height: '90%',
+    width: '100%',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  container: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  image: {
-    height: '80%',
-    resizeMode: 'contain',
+  imagePopupBackground: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    height: '60%',
+    overflow: 'hidden',
     width: '80%',
   },
-});
+  imagePopupButtons: {
+    borderTopColor: 'rgba(0, 0, 0, 0.2)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  imagePopupContainer: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    bottom: 0,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  imagePopupContent: {
+    flex: 1,
+  },
+  popupButtonText: {
+    backgroundColor: 'rgb(61, 152, 154)',
+    borderRadius: 5,
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+  },
+};
 
 export default ImagePopup;

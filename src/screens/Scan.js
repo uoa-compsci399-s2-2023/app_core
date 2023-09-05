@@ -1,146 +1,97 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { Camera } from 'expo-camera';
+import GeneralButton from '../components/GeneralButton';
+import CaptureButton from '../components/CaptureButton';
+import { usePhoto } from '../ImageContext';
 
-const CameraScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
+const Scan = ({ navigation }) => {
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const cameraRef = useRef(null); //A hook that allows to directly create a reference to the DOM element in the functional component.
   const [pictureCount, setPictureCount] = useState(0);
-  const [photos, setPhotos] = useState([]);
-  const cameraRef = useRef(null);
+  const { capturedPhotos, setCapturedPhotos } = usePhoto(); 
 
-  useEffect(() => {
-    const requestCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    };
-    requestCameraPermissions();
-  }, []);
+useEffect(() => {
+  (async () => {
+    //Getting permissions for accessing camera
+    const cameraStatus = await Camera.requestCameraPermissionsAsync();
+    setHasCameraPermission(cameraStatus.status === 'granted')
+  })();
+}, [])
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo);
-      setPictureCount(count => count + 1);
-      setPhotos(prevPhotos => [...prevPhotos, photo]);
+const takePicture = async () => {
+  if(cameraRef) {
+    try{
+      const data = await cameraRef.current.takePictureAsync();
+      console.log(data);
+      setPictureCount(pictureCount => pictureCount + 1)
+      const updatedPhotos = [...capturedPhotos, data]; // Add the new photo to the existing list
+      setCapturedPhotos(updatedPhotos); 
+    } catch(e) {
+      console.log(e);
     }
-  };
-
-  const handleCancel = () => {
-    setPhotos([]); // Clear the photos array
-    setPictureCount(0); // Reset the counter
-  };
-
-  if (hasPermission === null) {
-    return <View />;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+}
 
-  const windowWidth = Dimensions.get('window').width;
-  const aspectRatio = 4 / 3;
-
-  const canPressDone = photos.length > 0;
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.header} />
-      <View style={styles.cameraContainer}>
-        <Camera
-          style={{
-            width: windowWidth,
-            height: windowWidth * aspectRatio,
-          }}
-          type={Camera.Constants.Type.back}
-          ref={cameraRef}
-        />
-      </View>
-      <View style={styles.captureFooter}>
-        <TouchableOpacity style={styles.captureButtonOuter} onPress={takePicture}>
-          <View style={styles.captureButtonInner}>
-            <View style={[styles.middleWhiteCircle]} />
-            <Text style={styles.pictureCountText}>{pictureCount}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.buttonFooter}>
-        <TouchableOpacity style={styles.button} onPress={handleCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, !canPressDone]} onPress={() => navigation.navigate('FileExplorer', { photos })} disabled={!canPressDone}>
-          <Text style={styles.buttonText}>Done</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+const handleCancel = () => {
+  setPictureCount(0); // Reset the counter
+  setCapturedPhotos([]);
 };
 
+const handleDone = () => {
+  console.log(capturedPhotos);
+  if ( pictureCount > 0 ) {
+    navigation.navigate('ImageGallery');
+  }
+}
+
+if(hasCameraPermission === false) {
+  return <Text>No access to Camera</Text>
+}
+  return (
+    <View style={styles.container}>
+      <View style={styles.cameraContainer}>
+        <Camera style ={styles.camera} ref={cameraRef} />
+      </View>
+      <View style={styles.captureContainer}>
+        <CaptureButton count = {pictureCount} onPress={takePicture} />
+      </View>
+      <View style={styles.buttonFooter}>
+        <GeneralButton title={"Cancel"} onPress={handleCancel}/>
+        <GeneralButton title={"Done"} onPress={handleDone}/>
+      </View>
+    </View>
+  )
+}
+
+export default Scan
+
 const styles = StyleSheet.create({
-  button: {
-    paddingHorizontal: 30,
-    paddingVertical: 10,
+  container: {
+    flex: 1,
+    backgroundColor: 'rgb(61, 152, 154)',
+    justifyContent: 'center',
+  },
+  camera: {
+    borderRadius: 20,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').width * (4/3),
   },
   buttonFooter: {
     alignItems: 'center',
-    backgroundColor: 'rgb(61, 152, 154)',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 20,
+    paddingVertical: 15,
     paddingHorizontal: 20,
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
+  captureContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 20,
   },
   cameraContainer: {
     flex: 1,
+    paddingTop: 50,
   },
-  captureButtonInner: {
-    alignItems: 'center',
-    backgroundColor: 'rgb(61, 152, 154)',
-    borderRadius: 40,
-    height: 65,
-    justifyContent: 'center',
-    position: 'relative',
-    width: 65,
-  },
-  captureButtonOuter: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 40,
-    height: 75,
-    justifyContent: 'center',
-    width: 75,
-  },
-  captureFooter: {
-    alignItems: 'center',
-    backgroundColor: 'rgb(61, 152, 154)',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 0,
-    paddingBottom: 10,
-  },
-  container: {
-    backgroundColor: 'rgb(61, 152, 154)',
-    flex: 1,
-  },
-  header: {
-    backgroundColor: 'rgb(61, 152, 154)',
-    height: 50,
-  },
-  middleWhiteCircle: {
-    backgroundColor: '#fff',
-    borderRadius: 999,
-    height: 55,
-    position: 'absolute',
-    width: 55,
-  },
-  pictureCountText: {
-    color: '#000',
-    fontSize: 25,
-    position: 'absolute',
-  },
-});
-
-export default CameraScreen;
+})

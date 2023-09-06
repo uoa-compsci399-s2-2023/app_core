@@ -62,10 +62,6 @@ export default function Login({ navigation}) {
             })
           }
         />
-        <LoginButton text="Sign in with Google" icon={require("../../assets/icons/google.png")}
-          onPress={() =>
-            navigation.navigate('Scan')
-          }/>
         <Text style={styles.text} onPress={() => navigation.navigate('Config')}>{"Options (temp)"}</Text>
       </View>
     </Screen>

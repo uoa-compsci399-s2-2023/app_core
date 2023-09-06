@@ -16,25 +16,19 @@ export default function TokensDetected({ route}) {
   let cleanedTitle = "";
   let cleanedFolder = "";
 
-  // Title: My Notes
-  // Folder: home/my_notes
-  // @ 22/08/2023
-  // Agenda1ounddio1dmio1dm1
-  // # Get the groceries @ 22/09/2023
-
   const title = splitLines.find(element => element.toLowerCase().startsWith(TITLE_TOKEN));
   const folder = splitLines.find(element => element.toLowerCase().startsWith(FOLDER_TOKEN));
   
   if (title) {
-    cleanedTitle = title
+    cleanedTitle = title.match(/:\s*(.+)/)[1].trim()
   } else {
     cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
   }
 
   if (folder) {
-    cleanedFolder = folder
+    cleanedFolder = folder.match(/:\s*(.+)/)[1].trim()
   } else {
-    cleanedFolder = `Tabs - ${new Date().toUTCString()}`;
+    cleanedFolder = 'Unsorted';
   }
 
   const [isEditingFile, setIsEditingFIle] = useState(false);

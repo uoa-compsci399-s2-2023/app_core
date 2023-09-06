@@ -8,12 +8,13 @@ export default function TokensDetected({ route}) {
   
   const inputRef = useRef(null);
 
-  const TITLE_TOKEN = 'title:'
-  const FOLDER_TOKEN = 'folder:'
+  const TITLE_TOKEN = 'title'
+  const FOLDER_TOKEN = 'folder'
   const TASK_TOKEN = '#'
 
   const splitLines = scannedText.split(/\r?\n/);
   let cleanedTitle = "";
+  let cleanedFolder = "";
 
   // Title: My Notes
   // Folder: home/my_notes
@@ -25,9 +26,15 @@ export default function TokensDetected({ route}) {
   const folder = splitLines.find(element => element.toLowerCase().startsWith(FOLDER_TOKEN));
   
   if (title) {
-    cleanedTitle = title.substr(6).trim().replace(":", "");
+    cleanedTitle = title
   } else {
     cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
+  }
+
+  if (folder) {
+    cleanedFolder = folder
+  } else {
+    cleanedFolder = `Tabs - ${new Date().toUTCString()}`;
   }
 
   const [isEditingFile, setIsEditingFIle] = useState(false);
@@ -89,6 +96,19 @@ export default function TokensDetected({ route}) {
             </TouchableOpacity>
           ) : null}
         </View>
+
+        {/* display the folder name  */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Folder:</Text>
+          <View style={styles.buttonContainer}>
+          </View>
+        </View>
+        <View style={styles.dataContainer}>
+          <ScrollView>
+            <Text>{cleanedFolder}</Text>
+          </ScrollView>
+        </View>
+            
 
         {/* Container with Issue START */}
         <View>

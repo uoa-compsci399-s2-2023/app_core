@@ -2,9 +2,13 @@ import React, {useRef, useState} from 'react';
 import {View, Text, StyleSheet, TextInput,TouchableOpacity, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Screen } from "../components/Layout";
+import Spinner from 'react-native-loading-spinner-overlay';
+import { parse, format } from 'date-fns';
+import { Checkmark } from "../components/Modals.js";
+import oneDrive from '../oneDrive';
+import toDo from '../toDo';
 
-export default function TokensDetected({ route}) {
-
+export default function TokensDetected({ route, navigation }) {
   const { scannedText } = route.params;
   const inputRef = useRef(null);
 
@@ -91,12 +95,45 @@ export default function TokensDetected({ route}) {
       setEditingTaskIndex(index);
     }
   };
+
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [checkmarkVisible, setCheckmarkVisible] = useState(false);
+
+  async function uploadNote() {
+    setShowSpinner(true);
+    const splitLines = scannedText.toLowerCase().split(/\r?\n/);
+    const noteBody = splitLines.filter(s => !s.toLowerCase().startsWith(TITLE_TOKEN))
+      .filter(s => !s.toLowerCase().startsWith(FOLDER_TOKEN))
+      .filter(s => !s.startsWith(TASK_TOKEN))
+    const defaultTaskList = await toDo.getDefaultTaskList();
+    taskList.forEach(async t => {
+      const [ title, dateTime ] = t.split('\nDue at: ');
+      const formattedDateTime = format(parse(dateTime.trim(), 'dd/MM/yyyy', new Date()), 'MM/dd/yyyy')
+      await toDo.createTask({
+        taskListId: defaultTaskList.id,
+        title,
+        dateTime: formattedDateTime,
+      });
+    });
+    await oneDrive.uploadFile({ body: noteBody.join('\n'), path: `${cleanedFolder}/${cleanedTitle}.txt` });
+    setShowSpinner(false);
+    setCheckmarkVisible(true);
+    setTimeout(() => {
+      setCheckmarkVisible(false);
+      navigation.navigate('Scan');
+    }, 1500)
+  }
  
   return (
     <Screen>
+      <Spinner
+        visible={showSpinner}
+        textContent={'Uploading...'}
+      />
+      <Checkmark visible={checkmarkVisible} />
       <ScrollView>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>FileName:</Text>
+          <Text style={styles.titleText}>File Name:</Text>
           <View style={styles.buttonContainer}>
             <Icon name="edit" size={25} color="black" style={styles.icon} onPress={editFileName} />
           </View>
@@ -230,7 +267,9 @@ export default function TokensDetected({ route}) {
         {/* Container with Issue END  */}
 
         <View style={styles.nextIconContainer}>
-          <Icon name="arrow-circle-o-right" size={100} color="black" />
+          <TouchableOpacity onPress={uploadNote}>
+            <Icon name="arrow-circle-o-right" size={100} color="black" />
+          </TouchableOpacity>
         </View>
 
         

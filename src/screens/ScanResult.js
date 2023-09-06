@@ -54,9 +54,8 @@ export default function ScanResult({ route, navigation }) {
       </View>
 
       {!editing && (
-        // TODO: Navigates to Next Screen. Temp fill
         <TouchableOpacity
-          onPress={() => navigation.navigate('Scan')}
+          onPress={() => navigation.navigate('TokensDetected', { scannedText: text })}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Confirm Scan</Text>

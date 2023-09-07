@@ -20,13 +20,29 @@ export default function TokensDetected({ route}) {
   const folder = splitLines.find(element => element.toLowerCase().startsWith(FOLDER_TOKEN));
   
   if (title) {
-    cleanedTitle = title.match(/:\s*(.+)/)[1].trim()
+
+    const titleRegex = title.match(/:\s*(.+)/);
+
+    if (titleRegex && titleRegex.length > 1) {
+      cleanedTitle = titleRegex[1].trim()
+    }
+    else {
+      cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
+    }
   } else {
     cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
   }
 
   if (folder) {
-    cleanedFolder = folder.match(/:\s*(.+)/)[1].trim()
+
+    const folderRegex = folder.match(/:\s*(.+)/);
+
+    if (folderRegex && folderRegex.length > 1) {
+      cleanedFolder = folderRegex[1].trim()
+    }
+    else {
+      cleanedFolder = 'Unsorted';
+    }
   } else {
     cleanedFolder = 'Unsorted';
   }

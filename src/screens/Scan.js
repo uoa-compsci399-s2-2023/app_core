@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {View, StyleSheet, Text, PixelRatio} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
 import {Buffer} from 'buffer';
 
@@ -9,11 +9,8 @@ import textract from "../textract.js";
 import ScannedNote from "../models/ScannedNote.js";
 
 import {Screen} from "../components/Layout";
-import {CaptureButton} from "../components/Buttons.js";
+import {CaptureButton, TextButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
-
-const fontScale = PixelRatio.getFontScale();
-const getFontSize = size => size / fontScale;
 
 export default function Scan({ route, navigation }) {
 
@@ -109,15 +106,20 @@ export default function Scan({ route, navigation }) {
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
         <View style={styles.footer}>
           <View style={styles.row}>
-            <Text
-              style={[styles.textButton, styles.textNormal]}
-              onPress={() => returnToPreviousScreen()}>{backString}</Text>
+            <TextButton
+              style={styles.textNormal}
+              onPress={() => returnToPreviousScreen()} buttonText={backString}/>
 
-            <CaptureButton active={!capturing} onPress={() => { takePicture() }} retakeMode={retakeMode}/>
+            <CaptureButton
+              active={!capturing}
+              onPress={() => { takePicture() }}
+              retakeMode={retakeMode}/>
 
-            <Text
-              style={[styles.textButton, styles.textImportant]}
-              onPress={() => gotoGallery()}>{photos.length === 0 ? "" : "Done"}</Text>
+            <TextButton
+              style={styles.textImportant}
+              onPress={() => gotoGallery()}
+              buttonText={"Done"}
+              disabled={photos.length === 0}/>
           </View>
         </View>
       </View>
@@ -142,12 +144,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 20,
     paddingRight: 20
-  },
-  textButton: {
-    fontSize: getFontSize(24),
-    fontWeight: "normal",
-    textAlign: "center",
-    width: getFontSize(85)
   },
   textImportant: {
     color: lightTheme.importantColor

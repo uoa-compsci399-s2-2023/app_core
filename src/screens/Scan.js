@@ -115,6 +115,9 @@ export default function Scan({ route, navigation }) {
       }).then((response) => {
 
         // return states back to normal
+        setPhotos([]);
+        setBackString('Cancel');
+        setCapturing(false);
         setShowSpinner(false);
         this.camera.resumePreview();
 

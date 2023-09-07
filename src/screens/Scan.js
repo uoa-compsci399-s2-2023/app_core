@@ -1,25 +1,25 @@
 import React, {useState} from "react";
-import Spinner from 'react-native-loading-spinner-overlay';
 
 import {View, StyleSheet} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
-import {Buffer} from 'buffer';
-
-import textract from "../textract.js";
-import ScannedNote from "../models/ScannedNote.js";
 
 import {Screen} from "../components/Layout";
 import {CaptureButton, TextButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
+import {Alert} from "../components/Modals.js";
 
 export default function Scan({ route, navigation }) {
 
-  const {retakeMode} = route.params;
+  const {retakeMode, imageIndex} = route.params;
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const [capturing, setCapturing] = useState(false);
-  const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
+
+  if (!permission) {
+    return <View></View>
+  }
 
   function takePicture() {
 
@@ -35,12 +35,21 @@ export default function Scan({ route, navigation }) {
     this.camera.takePictureAsync({ base64: true }).then((data) => {
 
       if (retakeMode) {
+
         setBackString("Retake");
-        setPhotos([data.base64]);
+
+        // update photos
+        const newPhotoArray = [
+          ...photos.slice(0, imageIndex),
+          data,
+          ...photos.slice(imageIndex + 1)
+        ];
+
+        setPhotos(newPhotoArray);
       }
       else {
         // store the base 64 of our photo into our "photos" array
-        setPhotos(oldPhotos => [...oldPhotos, data.base64]);
+        setPhotos(oldPhotos => [...oldPhotos, data]);
 
         // resume our ability to take another photo
         setCapturing(false);
@@ -51,56 +60,47 @@ export default function Scan({ route, navigation }) {
 
   function returnToPreviousScreen() {
 
-    setPhotos([]);
-
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
-    if (retakeMode && photos.length === 1) {
+    if (retakeMode && photos.length !== 0) {
 
       setBackString("Cancel");
       setCapturing(false);
 
       this.camera.resumePreview();
+
+      if (backString !== "Retake") {
+        navigation.navigate('Image Gallery', {
+          photos:  photos,
+        })
+      }
     }
     else {
+      setPhotos([]);
       navigation.goBack();
     }
   }
 
   function gotoGallery() {
 
-    // todo: rewrite once we have gallery implemented, right now it just passes the everything to Textract
-    // and goes to the Scan results screen
-    if (retakeMode && photos.length === 1) {
+    if (retakeMode && photos.length !== 0) {
+      setBackString("Cancel");
+      setCapturing(false);
 
-      setShowSpinner(true);
-
-      setTimeout(() => {
-        textract.detectDocumentText({
-          data: Buffer.from(photos.at(0), 'base64'),
-          credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY }
-        }).then((response) => {
-  
-          // return states back to normal
-          setPhotos([]);
-          setBackString('Cancel');
-          setCapturing(false);
-          setShowSpinner(false);
-          this.camera.resumePreview();
-  
-          navigation.navigate('Scan Result', {
-            scannedText:  ScannedNote.fromTextractResponse(response).text,
-          })
-        });
-      }, 1000);
+      this.camera.resumePreview();
     }
+
+    navigation.navigate('Image Gallery', {
+      photos:  photos,
+    })
   }
 
   return (
     <Screen>
-      <Spinner
-        visible={showSpinner}
-        textContent={'Analysing...'}
-      />
+      <Alert
+        visible = {!permission.granted}
+        modalTitle={"Camera Access"}
+        modalText={"For our application to work we require access to your camera."}
+        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
 
       <View style={styles.view}>
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: "5%",
+    paddingRight: "5%"
   },
   textImportant: {
     color: lightTheme.importantColor

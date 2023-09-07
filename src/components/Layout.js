@@ -9,7 +9,7 @@ export function Screen(props) {
   const styles = StyleSheet.create({
     screen: {
       backgroundColor: lightTheme.background,
-      height: "100%",
+      minHeight: "100%",
       width: "100%",
     }
   });

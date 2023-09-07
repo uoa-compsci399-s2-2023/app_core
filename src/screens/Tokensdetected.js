@@ -4,46 +4,66 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Screen } from "../components/Layout";
 
 export default function TokensDetected({ route}) {
+
   const { scannedText } = route.params;
-  
   const inputRef = useRef(null);
 
   const TITLE_TOKEN = 'title'
   const FOLDER_TOKEN = 'folder'
   const TASK_TOKEN = '#'
 
-  const splitLines = scannedText.split(/\r?\n/);
-  let cleanedTitle = "";
-  let cleanedFolder = "";
+  let tasks = [];
+  let cleanedTitle = null;
+  let cleanedFolder = null;
 
-  const title = splitLines.find(element => element.toLowerCase().startsWith(TITLE_TOKEN));
-  const folder = splitLines.find(element => element.toLowerCase().startsWith(FOLDER_TOKEN));
-  
-  if (title) {
+  // only iterate over text once, to enforce O(n) where n is the number of lies
+  // if a string start with one token it will not start with another, this should remove some repeat processing
+  scannedText.toLowerCase().split(/\r?\n/).forEach((text) => {
 
-    const titleRegex = title.match(/:\s*(.+)/);
+    const textTrimmed = text.trim();
 
-    if (titleRegex && titleRegex.length > 1) {
-      cleanedTitle = titleRegex[1].trim()
+    // find title if we don't have one
+    if (cleanedTitle == null) {
+
+      if (textTrimmed.toLowerCase().startsWith(TITLE_TOKEN)) {
+
+        const titleRegex = textTrimmed.match(/:\s*(.+)/);
+
+        if (titleRegex && titleRegex.length > 1) {
+          cleanedTitle = titleRegex[1];
+        }
+
+        return;
+      }
     }
-    else {
-      cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
+
+    // find folder if we don't have one already
+    if (cleanedFolder == null) {
+
+      if (textTrimmed.toLowerCase().startsWith(FOLDER_TOKEN)) {
+
+        const folderRegex = textTrimmed.match(/:\s*(.+)/);
+
+        if (folderRegex && folderRegex.length > 1) {
+          cleanedFolder = folderRegex[1];
+        }
+
+        return;
+      }
     }
-  } else {
+
+    // append any tasks we find into tasks list
+    if (textTrimmed.toLowerCase().startsWith(TASK_TOKEN)) {
+      tasks.push(textTrimmed);
+    }
+  })
+
+  // set title and folder if we dont detect anything
+  if (cleanedTitle == null) {
     cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
   }
 
-  if (folder) {
-
-    const folderRegex = folder.match(/:\s*(.+)/);
-
-    if (folderRegex && folderRegex.length > 1) {
-      cleanedFolder = folderRegex[1].trim()
-    }
-    else {
-      cleanedFolder = 'Unsorted';
-    }
-  } else {
+  if (cleanedFolder == null) {
     cleanedFolder = 'Unsorted';
   }
 
@@ -52,8 +72,6 @@ export default function TokensDetected({ route}) {
   const [editedTaskContent, setEditedTaskContent] = useState('');
   const [fileNameText, setText] = useState(cleanedTitle);
 
-  const tasks = splitLines.filter(s => s.startsWith(TASK_TOKEN));
-  
   // Replace "@" with "Due at:"
   const [taskList, setTaskList] = useState(tasks.map((item) => item.substr(1).trim().replace("@", "\nDue at: ")));
 

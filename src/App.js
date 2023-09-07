@@ -14,6 +14,7 @@ import Scan from './screens/Scan';
 import Config from './screens/Config';
 import ScanResult from './screens/ScanResult';
 import TokensDetected from './screens/Tokensdetected';
+import ImageGallery from "./screens/ImageGallery.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ function App() {
         <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}} initialParams={{ retakeMode: false }}/>
         <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="Tokens Detected" component={TokensDetected} />
+        <Stack.Screen name="Image Gallery" component={ImageGallery} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

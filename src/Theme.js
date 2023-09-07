@@ -11,7 +11,8 @@ export const lightTheme = {
   textAlt: "#000000",
   accentColor: "#0078D4",
   errorColor: "#fa3a40",
-  importantColor: "#ff9900"
+  importantColor: "#ff9900",
+  brandColor: "#3F989A"
 };
 
 export const {

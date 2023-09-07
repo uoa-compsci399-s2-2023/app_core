@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Pressable, Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
 
-import {lightTheme} from "../Theme";
+import {lightTheme, scaledSize} from "../Theme";
 
 export function LoginButton(props) {
 
@@ -44,16 +44,16 @@ export function CaptureButton(props) {
       alignItems: "center",
       backgroundColor: lightTheme.background,
       borderColor: lightTheme.controlOutlineAlt,
-      borderRadius: 90,
+      borderRadius: scaledSize(90),
       borderWidth: 8,
       flexDirection: "row",
-      height: 80,
+      height: scaledSize(80),
       justifyContent: "center",
-      width: 80,
+      width: scaledSize(80),
     },
     text: {
       color: lightTheme.textAlt,
-      fontSize: 24,
+      fontSize: scaledSize(24),
       fontWeight: "bold"
     }
   });
@@ -85,12 +85,12 @@ export function TextButton(props) {
 
   const styles = StyleSheet.create({
     text: {
-      fontSize: 24,
+      fontSize: scaledSize(24),
       fontWeight: "normal",
       textAlign: "center",
     },
     touchableOpacity: {
-      width: 70
+      width: scaledSize(75)
     }
   });
 
@@ -104,5 +104,38 @@ export function TextButton(props) {
     <TouchableOpacity style={styles.touchableOpacity} onPress={() => onButtonPress()}>
       {props.disabled ? <View></View> : <Text style={[styles.text, props.style]}>{props.buttonText}</Text>}
     </TouchableOpacity>
+  );
+}
+
+export function TabsButton(props) {
+
+  const styles = StyleSheet.create({
+    pressable: {
+      alignItems: "center",
+      backgroundColor: lightTheme.brandColor,
+      borderRadius: scaledSize(10),
+      flexDirection: "row",
+      height: scaledSize(40),
+      justifyContent: "center",
+      width: scaledSize(100)
+    },
+    text: {
+      color: "white",
+      fontSize: scaledSize(24),
+      fontWeight: "normal",
+      textAlign: "center",
+    }
+  });
+
+  const onButtonPress = () => {
+    if (props.onPress != null) {
+      props.onPress();
+    }
+  };
+
+  return (
+    <Pressable style={styles.pressable} onPress={() => onButtonPress()}>
+      <Text style={styles.text}>{props.text}</Text>
+    </Pressable>
   );
 }

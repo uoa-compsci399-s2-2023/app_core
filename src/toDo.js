@@ -18,6 +18,10 @@ async function getDefaultTaskList() {
 // dateTime: '2023-09-05T22:00:00',
 async function createTask({ taskListId, title, dateTime }) {
   const accessToken = await SecureStore.getItemAsync('accessToken');
+  const dueDateTime = dateTime ? {
+    timeZone: getCalendars()[0].timeZone,
+    dateTime,
+  } : undefined;
   await fetch(`https://graph.microsoft.com/v1.0/me/todo/lists/${taskListId}/tasks`, {
     method: 'POST',
     headers: {
@@ -26,10 +30,7 @@ async function createTask({ taskListId, title, dateTime }) {
     },
     body: JSON.stringify({
       title,
-      dueDateTime: {
-        timeZone: getCalendars()[0].timeZone,
-        dateTime,
-      },
+      dueDateTime,
     }),
   });
 }

@@ -108,7 +108,10 @@ export default function TokensDetected({ route, navigation }) {
     const defaultTaskList = await toDo.getDefaultTaskList();
     taskList.forEach(async t => {
       const [ title, dateTime ] = t.split('\nDue at: ');
-      const formattedDateTime = format(parse(dateTime.trim(), 'dd/MM/yyyy', new Date()), 'MM/dd/yyyy')
+      let formattedDateTime;
+      if(dateTime) {
+        formattedDateTime = format(parse(dateTime.trim(), 'dd/MM/yyyy', new Date()), 'MM/dd/yyyy')
+      }
       await toDo.createTask({
         taskListId: defaultTaskList.id,
         title,

@@ -4,30 +4,66 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Screen } from "../components/Layout";
 
 export default function TokensDetected({ route}) {
+
   const { scannedText } = route.params;
-  
   const inputRef = useRef(null);
 
   const TITLE_TOKEN = 'title'
   const FOLDER_TOKEN = 'folder'
   const TASK_TOKEN = '#'
 
-  const splitLines = scannedText.split(/\r?\n/);
-  let cleanedTitle = "";
-  let cleanedFolder = "";
+  let tasks = [];
+  let cleanedTitle = null;
+  let cleanedFolder = null;
 
-  const title = splitLines.find(element => element.toLowerCase().startsWith(TITLE_TOKEN));
-  const folder = splitLines.find(element => element.toLowerCase().startsWith(FOLDER_TOKEN));
-  
-  if (title) {
-    cleanedTitle = title.match(/:\s*(.+)/)[1].trim()
-  } else {
+  // only iterate over text once, to enforce O(n) where n is the number of lies
+  // if a string start with one token it will not start with another, this should remove some repeat processing
+  scannedText.toLowerCase().split(/\r?\n/).forEach((text) => {
+
+    const textTrimmed = text.trim();
+
+    // find title if we don't have one
+    if (cleanedTitle == null) {
+
+      if (textTrimmed.toLowerCase().startsWith(TITLE_TOKEN)) {
+
+        const titleRegex = textTrimmed.match(/:\s*(.+)/);
+
+        if (titleRegex && titleRegex.length > 1) {
+          cleanedTitle = titleRegex[1];
+        }
+
+        return;
+      }
+    }
+
+    // find folder if we don't have one already
+    if (cleanedFolder == null) {
+
+      if (textTrimmed.toLowerCase().startsWith(FOLDER_TOKEN)) {
+
+        const folderRegex = textTrimmed.match(/:\s*(.+)/);
+
+        if (folderRegex && folderRegex.length > 1) {
+          cleanedFolder = folderRegex[1];
+        }
+
+        return;
+      }
+    }
+
+    // append any tasks we find into tasks list
+    if (textTrimmed.toLowerCase().startsWith(TASK_TOKEN)) {
+      tasks.push(textTrimmed);
+    }
+  })
+
+  // set title and folder if we dont detect anything
+  if (cleanedTitle == null) {
     cleanedTitle = `Tabs - ${new Date().toUTCString()}`;
   }
 
-  if (folder) {
-    cleanedFolder = folder.match(/:\s*(.+)/)[1].trim()
-  } else {
+  if (cleanedFolder == null) {
     cleanedFolder = 'Unsorted';
   }
 
@@ -36,8 +72,6 @@ export default function TokensDetected({ route}) {
   const [editedTaskContent, setEditedTaskContent] = useState('');
   const [fileNameText, setText] = useState(cleanedTitle);
 
-  const tasks = splitLines.filter(s => s.startsWith(TASK_TOKEN));
-  
   // Replace "@" with "Due at:"
   const [taskList, setTaskList] = useState(tasks.map((item) => item.substr(1).trim().replace("@", "\nDue at: ")));
 
@@ -116,32 +150,40 @@ export default function TokensDetected({ route}) {
             {taskList.length > 0 ? (
             // Display the task list
               taskList.map((item, index) => {
-              /// get due date to calculate in the text after the @
-                const rawDueDate = item.split('Due at:')[1];
 
-                const dueDateParts = rawDueDate.split('/'); // Split the date string by '/'
-                const day = parseInt(dueDateParts[0], 10); // Parse day as an integer
-                const month = parseInt(dueDateParts[1], 10) - 1; // Parse month (subtract 1 as months are zero-based)
-                const year = parseInt(dueDateParts[2], 10); // Parse year
-                const taskDueDate = new Date(year, month, day);
+                let indicatorColor = "grey";
+                let dueText = "No due date";
 
-                // Calculate the time difference between now and the due date
-                const currentDate = Date.now();
-                
-                const timeDifferenceInDays = Math.ceil(
-                  (taskDueDate - currentDate) / (1000 * 60 * 60 * 24)
-                );
+                const passedDueDate = item.split('Due at:');
 
-                // Indicator 
-                let indicatorColor = 'green';
-                if (timeDifferenceInDays >= 1 && timeDifferenceInDays <= 2) {
-                  indicatorColor = 'red';
-                } else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
-                  indicatorColor = 'orange';
-                }
-                ///else if there no due date or cant find due date auto set due date to 7 days -> green
-                else if (timeDifferenceInDays < 0) {
-                  indicatorColor = 'green';
+                // can not find due date in task
+                if (passedDueDate.length > 1) {
+                  const dueDateParts = passedDueDate[1].split('/'); // Split the date string by '/'
+                  const day = parseInt(dueDateParts[0], 10); // Parse day as an integer
+                  const month = parseInt(dueDateParts[1], 10) - 1; // Parse month (subtract 1 as months are zero-based)
+                  const year = parseInt(dueDateParts[2], 10); // Parse year
+
+                  const taskDueDate = new Date(year, month, day);
+
+                  // Calculate the time difference between now and the due date
+                  const currentDate = Date.now();
+
+                  const timeDifferenceInDays = Math.ceil(
+                    (taskDueDate - currentDate) / (1000 * 60 * 60 * 24)
+                  );
+
+                  // Indicator
+                  if (timeDifferenceInDays >= 1 && timeDifferenceInDays <= 2) {
+                    indicatorColor = 'red';
+                  } else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
+                    indicatorColor = 'orange';
+                  }
+                  ///else if there no due date or cant find due date auto set due date to 7 days -> green
+                  else {
+                    indicatorColor = 'green';
+                  }
+
+                  dueText = timeDifferenceInDays <= 0  ? "Done" : `Due in ${timeDifferenceInDays} day${timeDifferenceInDays !== 1 ? 's' : ''}`
                 }
 
                 return (
@@ -150,11 +192,7 @@ export default function TokensDetected({ route}) {
                       <View
                         style={[styles.taskIndicator, { backgroundColor: indicatorColor }]}
                       ></View>
-                      <Text style={styles.taskIndicatorText}>
-                        {timeDifferenceInDays <= 0
-                          ? "Done"
-                          : `Due in ${timeDifferenceInDays} day${timeDifferenceInDays !== 1 ? 's' : ''}`}
-                      </Text>
+                      <Text style={styles.taskIndicatorText}>{dueText}</Text>
                       <Icon name="edit" size={25} color="black" style={styles.iconTask} onPress={() => toggleEditTask(index, item)} />
                     </View>
                     <View style={styles.taskTitleContainer}>

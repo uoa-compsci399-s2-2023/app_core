@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Pressable, Image, StyleSheet, Text, View} from "react-native";
+import {Pressable, Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
 
 import {lightTheme} from "../Theme";
 
@@ -78,5 +78,31 @@ export function CaptureButton(props) {
     <Pressable style={styles.pressable} onPress={() => onButtonPress(photos)}>
       {props.retakeMode ? <View></View> : <Text style={styles.text}>{photos}</Text> }
     </Pressable>
+  );
+}
+
+export function TextButton(props) {
+
+  const styles = StyleSheet.create({
+    text: {
+      fontSize: 24,
+      fontWeight: "normal",
+      textAlign: "center",
+    },
+    touchableOpacity: {
+      width: 70
+    }
+  });
+
+  const onButtonPress = () => {
+    if (props.onPress != null && !props.disabled) {
+      props.onPress();
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.touchableOpacity} onPress={() => onButtonPress()}>
+      {props.disabled ? <View></View> : <Text style={[styles.text, props.style]}>{props.buttonText}</Text>}
+    </TouchableOpacity>
   );
 }

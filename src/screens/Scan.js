@@ -1,7 +1,13 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import * as SecureStore from 'expo-secure-store';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import {View, StyleSheet, Text} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
+import {Buffer} from 'buffer';
+
+import textract from "../textract.js";
+import ScanModel from "../models/Scan.js";
 
 import {Screen} from "../components/Layout";
 import {Alert} from "../components/Modals.js";
@@ -14,8 +20,27 @@ export default function Scan({ route, navigation }) {
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const [capturing, setCapturing] = useState(false);
+  const [missingAWS, setMissingAWS] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
+
+  // todo: remove once we have gallery view
+  const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
+  const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
+
+  useEffect(() => {
+    function initializeCredentials() {
+
+      SecureStore.getItemAsync('awsAccessKeyId')
+        .then((result) => setAwsAccessKeyId(result));
+
+      SecureStore.getItemAsync('awsSecretAccessKey')
+        .then((result) => setAwsSecretAccessKey(result));
+    }
+
+    initializeCredentials();
+  }, [])
 
   if (!permission) {
     return <View></View>
@@ -32,7 +57,7 @@ export default function Scan({ route, navigation }) {
     setCapturing(true);
 
     this.camera.pausePreview();
-    this.camera.takePictureAsync().then((data) => {
+    this.camera.takePictureAsync({ base64: true }).then((data) => {
 
       if (retakeMode) {
         setBackString("Retake");
@@ -54,9 +79,11 @@ export default function Scan({ route, navigation }) {
     setPhotos([]);
 
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
-    if (retakeMode && photos.length !== 0) {
+    if (retakeMode && photos.length === 1) {
+
       setBackString("Cancel");
       setCapturing(false);
+
       this.camera.resumePreview();
     }
     else {
@@ -66,10 +93,52 @@ export default function Scan({ route, navigation }) {
 
   function gotoGallery() {
 
+    // todo: rewrite once we have gallery implemented, right now it just passes the everything to Textract
+    // and goes to the Scan results screen
+    if (retakeMode && photos.length === 1) {
+
+      const noAwsCredentials =
+        awsAccessKeyId == null || awsSecretAccessKey == null ||
+        awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
+
+      setMissingAWS(noAwsCredentials);
+
+      if (noAwsCredentials) {
+        return;
+      }
+
+      setShowSpinner(true);
+
+      textract.detectDocumentText({
+        data: Buffer.from(photos.at(0), 'base64'),
+        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+      }).then((response) => {
+
+        // return states back to normal
+        setShowSpinner(false);
+        this.camera.resumePreview();
+
+        navigation.navigate('Scan Result', {
+          scannedText:  ScanModel.fromTextractResponse(response).text,
+        })
+      });
+    }
   }
 
   return (
     <Screen>
+      <Spinner
+        visible={showSpinner}
+        textContent={'Analysing...'}
+      />
+
+      <Alert
+        visible={missingAWS}
+        isError={true}
+        modalTitle={"AWS Access Key"}
+        modalText={"Could not find AWS access keys, please set your access keys first."}
+        onConfirm={() => setMissingAWS(false)}/>
+
       <Alert
         visible = {!permission.granted}
         modalTitle={"Camera Access"}
@@ -80,9 +149,15 @@ export default function Scan({ route, navigation }) {
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
         <View style={styles.footer}>
           <View style={styles.row}>
-            <Text style={[styles.textButton, styles.textNormal]} onPress={() => returnToPreviousScreen()}>{backString}</Text>
+            <Text
+              style={[styles.textButton, styles.textNormal]}
+              onPress={() => returnToPreviousScreen()}>{backString}</Text>
+
             <CaptureButton active={!capturing} onPress={() => { takePicture() }} retakeMode={retakeMode}/>
-            <Text style={[styles.textButton, styles.textImportant]} onPress={() => gotoGallery()}>{"Done"}</Text>
+
+            <Text
+              style={[styles.textButton, styles.textImportant]}
+              onPress={() => gotoGallery()}>{photos.length === 0 ? "" : "Done"}</Text>
           </View>
         </View>
       </View>

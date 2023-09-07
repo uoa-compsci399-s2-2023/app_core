@@ -8,12 +8,14 @@ import {Alert} from "../components/Modals.js";
 import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
 
-export default function Scan({ navigation }) {
+export default function Scan({ route, navigation }) {
 
+  const {retakeMode} = route.params;
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const [capturing, setCapturing] = useState(false);
-  const [, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState([]);
+  const [backString, setBackString] = useState("Cancel");
 
   if (!permission) {
     return <View></View>
@@ -28,21 +30,38 @@ export default function Scan({ navigation }) {
     // this is so hacky omg,
     // stop our button from being pressed while capturing
     setCapturing(true);
+
     this.camera.pausePreview();
     this.camera.takePictureAsync().then((data) => {
 
-      // store the base 64 of our photo into our "photos" array
-      setPhotos(oldPhotos => [...oldPhotos, data.base64]);
+      if (retakeMode) {
+        setBackString("Retake");
+        setPhotos([data.base64]);
+      }
+      else {
+        // store the base 64 of our photo into our "photos" array
+        setPhotos(oldPhotos => [...oldPhotos, data.base64]);
 
-      // resume our ability to take another photo
-      setCapturing(false);
-      this.camera.resumePreview();
+        // resume our ability to take another photo
+        setCapturing(false);
+        this.camera.resumePreview();
+      }
     });
   }
 
   function returnToPreviousScreen() {
-    navigation.goBack();
+
     setPhotos([]);
+
+    // if in retake mode, and we have taken a photo, then allow for another retake before exiting
+    if (retakeMode && photos.length !== 0) {
+      setBackString("Cancel");
+      setCapturing(false);
+      this.camera.resumePreview();
+    }
+    else {
+      navigation.goBack();
+    }
   }
 
   function gotoGallery() {
@@ -61,8 +80,8 @@ export default function Scan({ navigation }) {
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
         <View style={styles.footer}>
           <View style={styles.row}>
-            <Text style={[styles.textButton, styles.textNormal]} onPress={() => returnToPreviousScreen()}>{"Cancel"}</Text>
-            <CaptureButton active={!capturing} onPress={() => { takePicture() }} />
+            <Text style={[styles.textButton, styles.textNormal]} onPress={() => returnToPreviousScreen()}>{backString}</Text>
+            <CaptureButton active={!capturing} onPress={() => { takePicture() }} retakeMode={retakeMode}/>
             <Text style={[styles.textButton, styles.textImportant]} onPress={() => gotoGallery()}>{"Done"}</Text>
           </View>
         </View>

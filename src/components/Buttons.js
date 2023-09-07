@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Pressable, Image, StyleSheet, Text} from "react-native";
+import {Pressable, Image, StyleSheet, Text, View} from "react-native";
 
 import {lightTheme} from "../Theme";
 
@@ -76,7 +76,7 @@ export function CaptureButton(props) {
 
   return (
     <Pressable style={styles.pressable} onPress={() => onButtonPress(photos)}>
-      <Text style={styles.text}>{photos}</Text>
+      {props.retakeMode ? <View></View> : <Text style={styles.text}>{photos}</Text> }
     </Pressable>
   );
 }

@@ -71,6 +71,12 @@ export function Alert(props) {
     return <View></View>;
   }
 
+  const onConfirm = (val) => {
+    if (props.onConfirm) {
+      props.onConfirm(val);
+    }
+  }
+
   return (
     <Modal animationType="fade" hardwareAccelerated={true} transparent={true}>
       <View style={[styles.view, styles.viewBackground]}>
@@ -78,10 +84,10 @@ export function Alert(props) {
           <Text style={styles.titleText}>{props.modalTitle}</Text>
           <Text style={styles.modalText}>{props.modalText}</Text>
           { props.isError ?
-            (<Text style={styles.errorText} onPress={() => props.onConfirm(false)}>OK</Text>) :
+            (<Text style={styles.errorText} onPress={() => onConfirm(false)}>OK</Text>) :
             (<View style={styles.actionView}>
-              <Text style={styles.actionText} onPress={() => props.onConfirm(false)}>Cancel</Text>
-              <Text style={styles.actionText} onPress={() => props.onConfirm(true)}>OK</Text>
+              <Text style={styles.actionText} onPress={() => onConfirm(false)}>Cancel</Text>
+              <Text style={styles.actionText} onPress={() => onConfirm(true)}>OK</Text>
             </View>) }
         </View>
       </View>
@@ -100,7 +106,10 @@ export function Textbox(props) {
   }
 
   const onConfirm = (string) => {
-    props.onConfirm(string);
+    if (props.onConfirm) {
+      props.onConfirm(string);
+    }
+
     setText("");
   }
 

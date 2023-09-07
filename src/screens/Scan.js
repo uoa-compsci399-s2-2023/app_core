@@ -1,52 +1,127 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import * as SecureStore from 'expo-secure-store';
-import { FontAwesome } from '@expo/vector-icons'; 
-import { View, StyleSheet, Pressable, Button } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
-import { Buffer } from 'buffer';
 import Spinner from 'react-native-loading-spinner-overlay';
-import textract from '../textract';
-import ScanModel from '../models/Scan';
 
-import { Screen } from "../components/Layout";
-import { Alert } from "../components/Modals.js";
+import {View, StyleSheet, Text} from 'react-native';
+import {Camera, CameraType} from 'expo-camera';
+import {Buffer} from 'buffer';
 
-export default function Scan({ navigation }) {
-  const [ awsAccessKeyId, setAwsAccessKeyId ] = useState('');
-  const [ awsSecretAccessKey, setAwsSecretAccessKey ] = useState('');
-  const [showSpinner, setShowSpinner] = useState(false);
+import textract from "../textract.js";
+import ScanModel from "../models/Scan.js";
+
+import {Screen} from "../components/Layout";
+import {Alert} from "../components/Modals.js";
+import {CaptureButton} from "../components/Buttons.js";
+import {lightTheme} from "../Theme.js";
+
+export default function Scan({ route, navigation }) {
+
+  const {retakeMode} = route.params;
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
+  const [capturing, setCapturing] = useState(false);
+  const [missingAWS, setMissingAWS] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [photos, setPhotos] = useState([]);
+  const [backString, setBackString] = useState("Cancel");
+
+  // todo: remove once we have gallery view
+  const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
+  const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
+
   useEffect(() => {
-    async function initializeCreds() {
-      const awsAccessKeyId = await SecureStore.getItemAsync('awsAccessKeyId');
-      const awsSecretAccessKey = await SecureStore.getItemAsync('awsSecretAccessKey');
-      setAwsAccessKeyId(awsAccessKeyId);
-      setAwsSecretAccessKey(awsSecretAccessKey);
+    function initializeCredentials() {
+
+      SecureStore.getItemAsync('awsAccessKeyId')
+        .then((result) => setAwsAccessKeyId(result));
+
+      SecureStore.getItemAsync('awsSecretAccessKey')
+        .then((result) => setAwsSecretAccessKey(result));
     }
-    initializeCreds();
+
+    initializeCredentials();
   }, [])
 
   if (!permission) {
-    return <View />;
+    return <View></View>
   }
 
-  async function takePicture() {
-    if (this.camera) {
-      setShowSpinner(true);
-      const data = await this.camera.takePictureAsync({ base64: true });
-      this.camera.pausePreview();
-      const imageByte = Buffer.from(data.base64, 'base64');
-      const textractResponse = await textract.detectDocumentText({
-        data: imageByte,
-        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
-      });
-      const scanModel = ScanModel.fromTextractResponse(textractResponse);
-      setShowSpinner(false);
+  function takePicture() {
+
+    if (!this.camera) {
+      return;
+    }
+
+    // this is so hacky omg,
+    // stop our button from being pressed while capturing
+    setCapturing(true);
+
+    this.camera.pausePreview();
+    this.camera.takePictureAsync({ base64: true }).then((data) => {
+
+      if (retakeMode) {
+        setBackString("Retake");
+        setPhotos([data.base64]);
+      }
+      else {
+        // store the base 64 of our photo into our "photos" array
+        setPhotos(oldPhotos => [...oldPhotos, data.base64]);
+
+        // resume our ability to take another photo
+        setCapturing(false);
+        this.camera.resumePreview();
+      }
+    });
+  }
+
+  function returnToPreviousScreen() {
+
+    setPhotos([]);
+
+    // if in retake mode, and we have taken a photo, then allow for another retake before exiting
+    if (retakeMode && photos.length === 1) {
+
+      setBackString("Cancel");
+      setCapturing(false);
+
       this.camera.resumePreview();
-      navigation.navigate('Scan Result', {
-        scannedText: scanModel.text,
-      })
+    }
+    else {
+      navigation.goBack();
+    }
+  }
+
+  function gotoGallery() {
+
+    // todo: rewrite once we have gallery implemented, right now it just passes the everything to Textract
+    // and goes to the Scan results screen
+    if (retakeMode && photos.length === 1) {
+
+      const noAwsCredentials =
+        awsAccessKeyId == null || awsSecretAccessKey == null ||
+        awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
+
+      setMissingAWS(noAwsCredentials);
+
+      if (noAwsCredentials) {
+        return;
+      }
+
+      setShowSpinner(true);
+
+      textract.detectDocumentText({
+        data: Buffer.from(photos.at(0), 'base64'),
+        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+      }).then((response) => {
+
+        // return states back to normal
+        setShowSpinner(false);
+        this.camera.resumePreview();
+
+        navigation.navigate('Scan Result', {
+          scannedText:  ScanModel.fromTextractResponse(response).text,
+        })
+      });
     }
   }
 
@@ -57,23 +132,34 @@ export default function Scan({ navigation }) {
         textContent={'Analysing...'}
       />
 
-      { /* This may need to be moved, depending on the camera component handles no permissions? */ }
+      <Alert
+        visible={missingAWS}
+        isError={true}
+        modalTitle={"AWS Access Key"}
+        modalText={"Could not find AWS access keys, please set your access keys first."}
+        onConfirm={() => setMissingAWS(false)}/>
+
       <Alert
         visible = {!permission.granted}
         modalTitle={"Camera Access"}
         modalText={"For our application to work we require access to your camera."}
-        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.navigate("Login") }} />
+        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
 
-      <View style={styles.container}>
-        <Pressable style={styles.configIcon} onPress={() => navigation.navigate('Config')}>
-          <FontAwesome name="gear" size={40} color="black" />
-        </Pressable>
+      <View style={styles.view}>
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
-        <Button
-          style={styles.captureButton}
-          title="Capture"
-          onPress={takePicture}
-        />
+        <View style={styles.footer}>
+          <View style={styles.row}>
+            <Text
+              style={[styles.textButton, styles.textNormal]}
+              onPress={() => returnToPreviousScreen()}>{backString}</Text>
+
+            <CaptureButton active={!capturing} onPress={() => { takePicture() }} retakeMode={retakeMode}/>
+
+            <Text
+              style={[styles.textButton, styles.textImportant]}
+              onPress={() => gotoGallery()}>{photos.length === 0 ? "" : "Done"}</Text>
+          </View>
+        </View>
       </View>
     </Screen>
   );
@@ -81,19 +167,39 @@ export default function Scan({ navigation }) {
 
 const styles = StyleSheet.create({
   camera: {
-    height: '80%',
+    height: "75%",
+    width: "100%"
   },
-  captureButton: {
-    marginBottom: 40,
-    paddingBottom: 40,
+  footer: {
+    flexDirection: "column",
+    height: "25%",
+    justifyContent: "center",
+    width: "100%",
   },
-  configIcon: {
-    marginBottom: 20,
-    marginLeft: 20,
-    marginTop: 20,
+  row: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 20,
+    paddingRight: 20
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  textButton: {
+    fontSize: 24,
+    fontWeight: "normal",
+    textAlign: "center",
+    width: 70
   },
+  textImportant: {
+    color: lightTheme.importantColor
+  },
+  textNormal: {
+    color: lightTheme.text,
+  },
+  view: {
+    backgroundColor: lightTheme.backgroundDark,
+    flexDirection: "column",
+    height: "100%",
+    paddingTop: "14%",
+    width: "100%"
+  }
 });

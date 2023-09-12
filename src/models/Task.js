@@ -47,6 +47,7 @@ class Task {
     if(this.dueDate) {
       return format(parse(this.dueDate.trim(), 'dd/MM/yyyy', new Date()), 'MM/dd/yyyy');
     }
+    return undefined;
   }
 
   get displayableDueDateText() {
@@ -54,6 +55,7 @@ class Task {
       const difference = getTimeDifferenceInDays(this.dueDate);
       return difference <= 0  ? 'Done' : `Due in ${difference} day${difference !== 1 ? 's' : ''}`;
     }
+    return undefined;
   }
 
   get displayableText() {

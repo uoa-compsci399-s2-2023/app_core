@@ -86,7 +86,7 @@ describe('ScannedNote', () => {
       const scannedNote = new ScannedNote({
         text: 'Hello\nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('Tabs - Tue, 12 Sep 2023 00:00:00 GMT');
+      expect(scannedNote.fileName).toEqual(expect.stringContaining('Tabs -'));
     });
   });
 

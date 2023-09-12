@@ -12,7 +12,8 @@ module.exports = {
     },
     "plugins": [
         "react",
-        "react-native"
+        "react-native",
+        "jest"
     ],
     "extends": [
         "eslint:recommended",

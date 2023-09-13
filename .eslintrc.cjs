@@ -7,11 +7,13 @@ module.exports = {
     },
     "env": {
         "browser": true,
-        "react-native/react-native": true
+        "react-native/react-native": true,
+        "jest/globals": true
     },
     "plugins": [
         "react",
-        "react-native"
+        "react-native",
+        "jest"
     ],
     "extends": [
         "eslint:recommended",

@@ -7,7 +7,7 @@ import {Camera, CameraType} from 'expo-camera';
 import {Buffer} from 'buffer';
 
 import textract from "../textract.js";
-import ScanModel from "../models/Scan.js";
+import ScannedNote from "../models/ScannedNote.js";
 
 import {Screen} from "../components/Layout";
 import {Alert} from "../components/Modals.js";

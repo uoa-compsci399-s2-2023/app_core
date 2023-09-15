@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import * as SecureStore from 'expo-secure-store';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, PixelRatio} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
 import {Buffer} from 'buffer';
 
@@ -13,6 +13,9 @@ import {Screen} from "../components/Layout";
 import {Alert} from "../components/Modals.js";
 import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
+
+const fontScale = PixelRatio.getFontScale();
+const getFontSize = size => size / fontScale;
 
 export default function Scan({ route, navigation }) {
 
@@ -187,10 +190,10 @@ const styles = StyleSheet.create({
     paddingRight: 20
   },
   textButton: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: "normal",
     textAlign: "center",
-    width: 70
+    width: getFontSize(85)
   },
   textImportant: {
     color: lightTheme.importantColor

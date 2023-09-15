@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import * as SecureStore from 'expo-secure-store';
 import {View, Image, StyleSheet, Text} from "react-native";
 import {LoginButton} from "../components/Buttons";
 import {Screen} from "../components/Layout";
 //import AppContext from '../components/AppContext';
 
-import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, getDefaultReturnUrl} from "expo-auth-session";
+import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery} from "expo-auth-session";
 
 export default function Login({ navigation}) {
   

@@ -109,22 +109,24 @@ export default function Scan({ route, navigation }) {
 
       setShowSpinner(true);
 
-      textract.detectDocumentText({
-        data: Buffer.from(photos.at(0), 'base64'),
-        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
-      }).then((response) => {
-
-        // return states back to normal
-        setPhotos([]);
-        setBackString('Cancel');
-        setCapturing(false);
-        setShowSpinner(false);
-        this.camera.resumePreview();
-
-        navigation.navigate('Scan Result', {
-          scannedText:  ScanModel.fromTextractResponse(response).text,
-        })
-      });
+      setTimeout(() => {
+        textract.detectDocumentText({
+          data: Buffer.from(photos.at(0), 'base64'),
+          credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+        }).then((response) => {
+  
+          // return states back to normal
+          setPhotos([]);
+          setBackString('Cancel');
+          setCapturing(false);
+          setShowSpinner(false);
+          this.camera.resumePreview();
+  
+          navigation.navigate('Scan Result', {
+            scannedText:  ScanModel.fromTextractResponse(response).text,
+          })
+        });
+      }, 1000);
     }
   }
 

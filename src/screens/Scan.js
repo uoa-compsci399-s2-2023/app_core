@@ -123,7 +123,7 @@ export default function Scan({ route, navigation }) {
           this.camera.resumePreview();
   
           navigation.navigate('Scan Result', {
-            scannedText:  ScanModel.fromTextractResponse(response).text,
+            scannedText:  ScannedNote.fromTextractResponse(response).text,
           })
         });
       }, 1000);

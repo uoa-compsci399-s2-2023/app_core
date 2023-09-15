@@ -15,21 +15,31 @@ import Config from './screens/Config';
 import ScanResult from './screens/ScanResult';
 import TokensDetected from './screens/Tokensdetected';
 
+import AppContext from './components/AppContext';
+
 const Stack = createNativeStackNavigator();
 
 function App() {
+  const [darkMode, setdevMode] = React.useState(false);
+  const toggleMode = () => setdevMode(!darkMode);
+  const userSettings ={
+    Mode: darkMode,
+    toggleMode,
+  };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
-        <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}} initialParams={{ retakeMode: true }}/>
-        <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
-        <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
-        <Stack.Screen name="TokensDetected" component={TokensDetected} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppContext.Provider value={userSettings}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
+          <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}} initialParams={{ retakeMode: true }}/>
+          <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
+          <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
+          <Stack.Screen name="TokensDetected" component={TokensDetected} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppContext.Provider>
   );
 }
 

@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "app_core",
+    "name": "Tabs",
     "slug": "app_core",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "exp",
+    "scheme": "Tabs",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

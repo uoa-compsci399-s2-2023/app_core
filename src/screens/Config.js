@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, TextInput, Text, Button, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext } from "react";
+import { StyleSheet, TextInput, Text, Button, View, Switch, TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { Screen } from "../components/Layout";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AppContext from '../components/AppContext';
 
 export default function Config({ navigation }) {
 
@@ -11,6 +12,8 @@ export default function Config({ navigation }) {
   const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
   const [showAccessKey, setShowAccessKey] = useState(false);
   const placeholderText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+  const userSettings = useContext(AppContext);
+
 
   useEffect(() => {
     async function initializeCreds() {
@@ -24,7 +27,7 @@ export default function Config({ navigation }) {
 
   const persistConfig = async () => {
     await SecureStore.setItemAsync('awsAccessKeyId', awsAccessKeyId);
-    await SecureStore.setItemAsync('awsSecretAccessKey',awsSecretAccessKey);
+    await SecureStore.setItemAsync('awsSecretAccessKey', awsSecretAccessKey);
     navigation.goBack();
   }
 
@@ -68,7 +71,17 @@ export default function Config({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-
+      <View style={styles.container}>
+        <Text style={styles.inputField}> {userSettings.Mode ? 'Expo' : 'APK'}
+        </Text>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={userSettings.Mode ? '#f5dd4b' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={userSettings.toggleMode}
+          value={userSettings.Mode}
+        />
+      </View>
       <TouchableOpacity
         onPress={persistConfig}
         style={styles.button}
@@ -93,17 +106,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 
+  container: {
+    alignItems: "flex-start",
+  },
+
   icon: {
     marginLeft: 20,
     marginRight: 5
   },
 
   inputContainer: {
-    alignItems: 'center', 
+    alignItems: 'center',
     borderColor: 'grey',
     borderRadius: 5,
     borderWidth: 1,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     height: 40,
     paddingHorizontal: 10,
   },

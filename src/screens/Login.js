@@ -1,10 +1,11 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import * as SecureStore from 'expo-secure-store';
 import {View, Image, StyleSheet, Text} from "react-native";
 import {LoginButton} from "../components/Buttons";
 import {Screen} from "../components/Layout";
+//import AppContext from '../components/AppContext';
 
-import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";
+import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, getDefaultReturnUrl} from "expo-auth-session";
 
 export default function Login({ navigation}) {
   
@@ -13,8 +14,10 @@ export default function Login({ navigation}) {
     "https://login.microsoftonline.com/common/v2.0",
   );
 
+  //const userSettings = useContext(AppContext);
+  
   const redirectUri = makeRedirectUri({
-    native: "exp://redirect",
+    native: "Tabs://redirect",
     preferLocalhost: true, //Temp
   });
 

@@ -34,7 +34,8 @@
     },
     "owner": "team-9",
     "plugins": [
-      "expo-localization"
+      "expo-localization",
+      "@config-plugins/detox"
     ]
   }
 }

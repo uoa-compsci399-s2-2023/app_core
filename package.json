@@ -9,7 +9,9 @@
     "build-android-dev-client": "eas build --platform android --local --profile dev-client --non-interactive --output bin/android_dev-client.apk",
     "build-android-dev": "eas build --platform android --local --profile dev --non-interactive --output bin/android_dev.apk",
     "build-android-preview": "eas build --platform android --local --profile preview --non-interactive --output bin/android_preview.apk",
-    "start-expo-client": "expo start --dev-client"
+    "start-expo-client": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@aws-sdk/client-textract": "3.354.0",
@@ -40,7 +42,9 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/eslint-parser": "^7.22.9",
+    "@config-plugins/detox": "^6.0.0",
     "@types/react-edit-text": "^5.0.1",
+    "detox": "^20.12.0",
     "eslint": "^8.46.0",
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-native": "^4.0.0",

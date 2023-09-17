@@ -17,9 +17,12 @@ export default function Login({ navigation}) {
   //const userSettings = useContext(AppContext);
   
   const redirectUri = makeRedirectUri({
-    native: "Tabs://redirect/",
+    scheme: 'Tabs',
+    path: 'redirect',
     preferLocalhost: true, //Temp
   });
+
+  console.log(redirectUri);
 
   const clientId = '7644da13-4be5-4c5c-860e-f068183aa631';
 

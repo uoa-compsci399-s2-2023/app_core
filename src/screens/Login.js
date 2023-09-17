@@ -16,13 +16,14 @@ export default function Login({ navigation}) {
 
   //const userSettings = useContext(AppContext);
   
-  const redirectUri = makeRedirectUri({
+  /*const redirectUri = makeRedirectUri({
     scheme: 'Tabs',
     path: 'redirect',
     preferLocalhost: true, //Temp
   });
+  */
 
-  console.log(redirectUri);
+  //console.log(redirectUri);
 
   const clientId = '7644da13-4be5-4c5c-860e-f068183aa631';
 
@@ -30,7 +31,7 @@ export default function Login({ navigation}) {
     {
       clientId,
       scopes: ['openid', 'profile', 'email', 'offline_access', 'files.readwrite', 'tasks.readwrite'],
-      redirectUri,
+      redirectUri: 'Tabs://redirect/',
     },
     discovery,
   );

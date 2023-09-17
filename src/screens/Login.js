@@ -17,7 +17,7 @@ export default function Login({ navigation}) {
   //const userSettings = useContext(AppContext);
   
   const redirectUri = makeRedirectUri({
-    native: "Tabs://redirect",
+    native: "Tabs://redirect/",
     preferLocalhost: true, //Temp
   });
 

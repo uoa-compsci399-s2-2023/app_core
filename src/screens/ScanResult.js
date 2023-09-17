@@ -55,7 +55,7 @@ export default function ScanResult({ route, navigation }) {
 
       {!editing && (
         <TouchableOpacity
-          onPress={() => navigation.navigate('TokensDetected', { scannedText: text })}
+          onPress={() => navigation.navigate('Tokens Detected', { scannedText: text })}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Confirm Scan</Text>

@@ -27,7 +27,7 @@ function App() {
         <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}} initialParams={{ retakeMode: true }}/>
         <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
-        <Stack.Screen name="TokensDetected" component={TokensDetected} />
+        <Stack.Screen name="Tokens Detected" component={TokensDetected} />
       </Stack.Navigator>
     </NavigationContainer>
   );

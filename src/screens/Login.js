@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SecureStore from 'expo-secure-store';
-import {View, Image, StyleSheet, Text} from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import {LoginButton} from "../components/Buttons";
 import {Screen} from "../components/Layout";
 

@@ -110,7 +110,7 @@ export default function Scan({ route, navigation }) {
       setTimeout(() => {
         textract.detectDocumentText({
           data: Buffer.from(photos.at(0), 'base64'),
-          credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+          credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY }
         }).then((response) => {
   
           // return states back to normal

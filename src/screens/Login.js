@@ -62,19 +62,12 @@ export default function Login({ navigation}) {
             })
           }
         />
-        <Text style={styles.text} onPress={() => navigation.navigate('Config')}>{"Options (temp)"}</Text>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  // Temporary style for options text, this is only used to store
-  text: {
-    color: "#D0D0D0",
-    fontSize: 24,
-    fontWeight: "bold"
-  },
   view: {
     alignItems: "center",
     height: "100%",

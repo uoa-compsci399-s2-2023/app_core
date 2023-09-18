@@ -42,6 +42,7 @@
     "@babel/core": "^7.20.0",
     "@babel/eslint-parser": "^7.22.9",
     "@types/react-edit-text": "^5.0.1",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "eslint": "^8.46.0",
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-native": "^4.0.0",

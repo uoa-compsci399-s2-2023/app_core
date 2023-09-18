@@ -95,7 +95,7 @@ class Task {
       if (difference === 0) {
       return 'Due Today';
       }
-    return difference < 0  ? 'Done' : `Due in ${difference} day${difference !== 1 ? 's' : ''}`;   
+    return difference < 0  ? 'Overdue' : `Due in ${difference} day${difference !== 1 ? 's' : ''}`;   
     }
     return undefined;
   }

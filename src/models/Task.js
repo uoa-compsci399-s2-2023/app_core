@@ -92,9 +92,9 @@ class Task {
     if(this.dueDate) {
       const difference = getTimeDifferenceInDays(this.dueDate);
       if (difference === 0) {
-      return 'Due Today';
+        return 'Due Today';
       }
-    return difference < 0  ? 'Overdue' : `Due in ${difference} day${difference !== 1 ? 's' : ''}`;   
+      return difference < 0  ? 'Overdue' : `Due in ${difference} day${difference !== 1 ? 's' : ''}`;   
     }
     return undefined;
   }

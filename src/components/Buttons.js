@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import {Pressable, Image, StyleSheet, Text, View} from "react-native";
 
-import {lightTheme} from "../Theme";
+import {lightTheme, scaledSize} from "../Theme";
 
 export function LoginButton(props) {
 
   const styles = StyleSheet.create({
     icon: {
-      height: 23,
-      width: 23
+      height: scaledSize(23),
+      width: scaledSize(23),
     },
     pressable: {
       alignItems: "center",
@@ -16,15 +16,17 @@ export function LoginButton(props) {
       borderRadius: 0,
       borderWidth: 2,
       flexDirection: "row",
-      gap: 10,
-      height: 50,
+      gap: "5%",
+      height: "5%",
       justifyContent: "flex-start",
-      padding: 10,
-      width: 250
+      maxHeight: scaledSize(50),
+      maxWidth: scaledSize(250),
+      padding: "2%",
+      width: "65%"
     },
     text: {
       color: lightTheme.text,
-      fontSize: 18,
+      fontSize: scaledSize(18),
       fontWeight: "normal"
     }
   });
@@ -44,16 +46,16 @@ export function CaptureButton(props) {
       alignItems: "center",
       backgroundColor: lightTheme.background,
       borderColor: lightTheme.controlOutlineAlt,
-      borderRadius: 90,
-      borderWidth: 8,
+      borderRadius: "100%",
+      borderWidth: "10%",
       flexDirection: "row",
-      height: 80,
+      height: scaledSize(80),
       justifyContent: "center",
-      width: 80,
+      width: scaledSize(80),
     },
     text: {
       color: lightTheme.textAlt,
-      fontSize: 24,
+      fontSize: scaledSize(24),
       fontWeight: "bold"
     }
   });

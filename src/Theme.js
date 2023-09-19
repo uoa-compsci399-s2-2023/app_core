@@ -22,6 +22,8 @@ export const {
 // note: we can change the '400' to any scale factor we want for real time scaling.
 const scale = SCREEN_WIDTH / 420;
 
+// scaled size should be used with any hard coded pixel value, ideally it will calculate
+// the pixel value based on the resolution of your device
 export function scaledSize(size) {
 
   const newSize = size * scale

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { parse, format } = require('date-fns');
 
 function getTimeDifferenceInDays(date) {

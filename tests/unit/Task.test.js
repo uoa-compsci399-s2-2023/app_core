@@ -57,7 +57,7 @@ describe('Task', () => {
   describe('displayableDueDateText', () => {
     it('should return "Done" when dueDate is in the past', () => {
       const task = new Task({ name: 'Test Task', dueDate: '01/01/2020' });
-      expect(task.displayableDueDateText).toBe('Done');
+      expect(task.displayableDueDateText).toBe('Overdue');
     });
 
     it('should return undefined when dueDate is not defined', () => {

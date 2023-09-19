@@ -37,9 +37,9 @@ class ScannedNote {
       return lower.startsWith(FILE_NAME_TOKENS[0]) || lower.startsWith(FILE_NAME_TOKENS[1]);
     });
     if(!matchingLine) {
-      return `Tabs - ${new Date().toUTCString()}`;
+      return `Tabs - ${new Date().toDateString()}`;
     }
-    return matchingLine.match(/:\s*(.+)/)[1];
+    return `${matchingLine.match(/:\s*(.+)/)[1]} ${new Date().toDateString()}`;
   }
 
   get folder() {

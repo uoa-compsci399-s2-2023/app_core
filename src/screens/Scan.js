@@ -20,7 +20,6 @@ const getFontSize = size => size / fontScale;
 export default function Scan({ route, navigation }) {
 
   const {retakeMode} = route.params;
-  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const [capturing, setCapturing] = useState(false);
   const [missingAWS, setMissingAWS] = useState(false);
@@ -44,10 +43,6 @@ export default function Scan({ route, navigation }) {
 
     initializeCredentials();
   }, [])
-
-  if (!permission) {
-    return <View></View>
-  }
 
   function takePicture() {
 
@@ -146,12 +141,6 @@ export default function Scan({ route, navigation }) {
         modalTitle={"AWS Access Key"}
         modalText={"Could not find AWS access keys, please set your access keys first."}
         onConfirm={() => setMissingAWS(false)}/>
-
-      <Alert
-        visible = {!permission.granted}
-        modalTitle={"Camera Access"}
-        modalText={"For our application to work we require access to your camera."}
-        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
 
       <View style={styles.view}>
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />

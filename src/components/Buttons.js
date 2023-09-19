@@ -52,9 +52,14 @@ export function CaptureButton(props) {
       width: scaledSize(80),
     },
     text: {
-      color: lightTheme.textAlt,
       fontSize: scaledSize(24),
       fontWeight: "bold"
+    },
+    textActive: {
+      color: lightTheme.textAlt,
+    },
+    textDisabled: {
+      color: lightTheme.text,
     }
   });
 
@@ -76,7 +81,9 @@ export function CaptureButton(props) {
 
   return (
     <Pressable style={styles.pressable} onPress={() => onButtonPress(photos)}>
-      {props.retakeMode ? <View></View> : <Text style={styles.text}>{photos}</Text> }
+      {props.retakeMode ?
+        <View></View> :
+        <Text style={[styles.text, props.active ? styles.textActive : styles.textDisabled]}>{photos}</Text> }
     </Pressable>
   );
 }

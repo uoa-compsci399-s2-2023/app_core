@@ -13,49 +13,43 @@ export default function Scan({ route, navigation }) {
   const {retakeMode, imageIndex} = route.params;
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
-  const [capturing, setCapturing] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
+  const [allowCapture, setAllowCapture] = useState(true);
 
-  if (!permission) {
+  if (permission === null) {
     return <View></View>
   }
 
-  function takePicture() {
+  async function takePicture() {
 
     if (!this.camera) {
       return;
     }
 
-    // this is so hacky omg,
-    // stop our button from being pressed while capturing
-    setCapturing(true);
+    if (retakeMode) {
+      this.camera.pausePreview();
+    }
 
-    this.camera.pausePreview();
-    this.camera.takePictureAsync({ base64: true }).then((data) => {
+    const data = await this.camera.takePictureAsync({ base64: true })
 
-      if (retakeMode) {
+    if (retakeMode) {
 
-        setBackString("Retake");
+      setBackString("Retake");
 
-        // update photos
-        const newPhotoArray = [
-          ...photos.slice(0, imageIndex),
-          data,
-          ...photos.slice(imageIndex + 1)
-        ];
+      // update photos
+      const newPhotoArray = [
+        ...photos.slice(0, imageIndex),
+        data,
+        ...photos.slice(imageIndex + 1)
+      ];
 
-        setPhotos(newPhotoArray);
-      }
-      else {
-        // store the base 64 of our photo into our "photos" array
-        setPhotos(oldPhotos => [...oldPhotos, data]);
-
-        // resume our ability to take another photo
-        setCapturing(false);
-        this.camera.resumePreview();
-      }
-    });
+      setPhotos(newPhotoArray);
+    }
+    else {
+      // store the base 64 of our photo into our "photos" array
+      setPhotos(oldPhotos => [...oldPhotos, data]);
+    }
   }
 
   function returnToPreviousScreen() {
@@ -63,10 +57,8 @@ export default function Scan({ route, navigation }) {
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
     if (retakeMode && photos.length !== 0) {
 
-      setBackString("Cancel");
-      setCapturing(false);
-
       this.camera.resumePreview();
+      setBackString("Cancel");
 
       if (backString !== "Retake") {
         navigation.navigate('Image Gallery', {
@@ -83,10 +75,8 @@ export default function Scan({ route, navigation }) {
   function gotoGallery() {
 
     if (retakeMode && photos.length !== 0) {
-      setBackString("Cancel");
-      setCapturing(false);
-
       this.camera.resumePreview();
+      setBackString("Cancel");
     }
 
     navigation.navigate('Image Gallery', {
@@ -97,13 +87,16 @@ export default function Scan({ route, navigation }) {
   return (
     <Screen>
       <Alert
-        visible = {!permission.granted}
+        visible = {permission.granted === false}
         modalTitle={"Camera Access"}
         modalText={"For our application to work we require access to your camera."}
         onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
 
       <View style={styles.view}>
-        <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
+        <Camera
+          style={styles.camera}
+          type={CameraType.back}
+          ref={ref => { this.camera = ref}}/>
         <View style={styles.footer}>
           <View style={styles.row}>
             <TextButton
@@ -111,8 +104,11 @@ export default function Scan({ route, navigation }) {
               onPress={() => returnToPreviousScreen()} buttonText={backString}/>
 
             <CaptureButton
-              active={!capturing}
-              onPress={() => { takePicture() }}
+              active={allowCapture}
+              onPress={() => {
+                setAllowCapture(false);
+                takePicture().then(() => { setAllowCapture(true); })
+              }}
               retakeMode={retakeMode}/>
 
             <TextButton

@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import {Image, Modal, StyleSheet, Text, TextInput, View} from "react-native";
-import {lightTheme} from "../Theme.js";
+import {lightTheme, scaledSize} from "../Theme.js";
 
 const styles= StyleSheet.create({
   actionText: {
     color: lightTheme.accentColor,
+    fontSize: scaledSize(14)
   },
   actionView: {
     display: "flex",
@@ -14,32 +15,35 @@ const styles= StyleSheet.create({
   },
   errorText: {
     color: lightTheme.errorColor,
+    fontSize: scaledSize(14)
   },
   imageCheckmark: {
-    height: 114,
-    width: 114
+    height: "55%",
+    width: "55%"
   },
   modal: {
     alignItems: "center",
     backgroundColor: lightTheme.background,
-    borderRadius: 14,
+    borderRadius: scaledSize(14),
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    padding: 20,
-    rowGap: 20,
-    width: 320
+    padding: "5%",
+    rowGap: scaledSize(20),
+    width: scaledSize(320)
   },
   modalText: {
-    textAlign: "center",
+    fontSize: scaledSize(14),
+    textAlign: "center"
   },
   textInput: {
-    borderBottomWidth: 1,
-    height: 30,
-    padding: 5,
-    width: 250,
+    borderBottomWidth: scaledSize(1),
+    height: scaledSize(30),
+    padding: scaledSize(5),
+    width: "75%",
   },
   titleText: {
+    fontSize: scaledSize(18),
     fontWeight: "bold"
   },
   view: {
@@ -56,12 +60,12 @@ const styles= StyleSheet.create({
   viewCheckmark: {
     alignItems: "center",
     backgroundColor: lightTheme.backgroundAlt,
-    borderRadius: 14,
+    borderRadius: "10%",
     display: "flex",
-    height: 210,
+    height: scaledSize(200),
     justifyContent: "center",
     position: "absolute",
-    width: 210
+    width: scaledSize(200)
   }
 });
 

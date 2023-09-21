@@ -51,35 +51,35 @@ describe('ScannedNote', () => {
       const scannedNote = new ScannedNote({
         text: 'title: my file name\nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('my file name');
+      expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should return the file name when a line is found to start with file name:', () => {
       const scannedNote = new ScannedNote({
         text: 'file name: my file name\nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('my file name');
+      expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should find the file name even when case is upper', () => {
       const scannedNote = new ScannedNote({
         text: 'TITLE: my file name\nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('my file name');
+      expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should strip the file name of all white space', () => {
       const scannedNote = new ScannedNote({
         text: 'TITLE:             my file name          \nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('my file name');
+      expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should find the file name when the file name is in the middle of the text', () => {
       const scannedNote = new ScannedNote({
         text: 'Hello\n TITLE: my file name \nMy\nName\nIs\nSlim\nShady'
       });
-      expect(scannedNote.fileName).toEqual('my file name');
+      expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should return a default file name when no match is found', () => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, StyleSheet, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { Screen } from "../components/Layout";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {scaledSize} from "../Theme.js";
 
 export default function ScanResult({ route, navigation }) {
   const { scannedText } = route.params;
@@ -75,12 +76,12 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     backgroundColor: '#3E989B',
-    padding: 16,
+    padding:  scaledSize(16),
   },
 
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: scaledSize(16),
     fontWeight: 'bold'
   },
 
@@ -90,19 +91,19 @@ const styles = StyleSheet.create({
   },
 
   editOptions: {
-    marginRight: 15
+    marginRight: "5%"
   },
 
   scanText: {
     backgroundColor: '#F1FEFB',
-    fontSize: 18,
-    padding: 20,
+    fontSize: scaledSize(18),
+    padding: "5%",
   },
 
   textInput: {
-    fontSize: 18,
-    padding: 14,
-    paddingBottom: 320
+    fontSize: scaledSize(18),
+    padding: "5%",
+    paddingBottom: "100%" // not 100% sure why i have to force it to 100 to make it work??
   },
 
 });

@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: "5%",
+    paddingRight: "5%"
   },
   textButton: {
     fontSize: getFontSize(24),

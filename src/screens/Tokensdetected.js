@@ -8,6 +8,7 @@ import oneDrive from '../oneDrive';
 import toDo from '../toDo';
 import ScannedNote from '../models/ScannedNote';
 import Task from '../models/Task';
+import {scaledSize} from "../Theme.js";
 
 export default function TokensDetected({ route, navigation }) {
   const { scannedText } = route.params;
@@ -167,14 +168,15 @@ const styles = StyleSheet.create({
   dataContainer: {
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    marginBottom: "2%",
+    paddingHorizontal: "4%",
+    paddingVertical: "2%",
   },
 
   icon: {
     marginLeft: 'auto', 
-    marginTop: 10,
+    marginRight: "10%",
+    marginTop: "5%"
 
   },
 
@@ -184,22 +186,20 @@ const styles = StyleSheet.create({
 
   nextIconContainer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: "4%",
   },
 
   taskContainer: {
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    marginBottom: 20,
-    padding: 10,
+    marginBottom: "3%",
+    padding: "2%",
   },
 
   taskIndicator: {
     borderRadius: 100,
-    height: 20, 
-    marginRight: 10,
-    width: 50, 
-
+    height: scaledSize(20),
+    width: scaledSize(50)
   },
 
   taskIndicatorContainer: {
@@ -208,14 +208,14 @@ const styles = StyleSheet.create({
   },
   taskIndicatorText: {
     color: 'gray',
-    fontSize: 12,
+    fontSize: scaledSize(12),
     
   },
   taskTitleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: "2%",
   },
   taskTitleText: {
     flex: 1,
@@ -228,15 +228,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    marginTop: 10,
-    paddingLeft: 25,
+    marginTop: "2%",
+    paddingLeft: "3%",
   },
   titleText: {
     borderRadius: 10,
-    fontSize: 16,
+    fontSize: scaledSize(16),
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10,
-  },
-
+    marginBottom: "2%",
+    marginTop: "2%",
+  }
 });

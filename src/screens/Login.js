@@ -5,6 +5,7 @@ import {LoginButton} from "../components/Buttons";
 import {Screen} from "../components/Layout";
 
 import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";
+import {scaledSize} from "../Theme.js";
 
 export default function Login({ navigation}) {
   
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   // Temporary style for options text, this is only used to store
   text: {
     color: "#D0D0D0",
-    fontSize: 24,
+    fontSize: scaledSize(24),
     fontWeight: "bold"
   },
   view: {

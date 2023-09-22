@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {View, StyleSheet} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
@@ -16,6 +16,21 @@ export default function Scan({ route, navigation }) {
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
   const [allowCapture, setAllowCapture] = useState(true);
+  const [mountCamera, setMountCamera] = useState(false);
+
+  // enable mount each time we load the camera, we must unmount each time we leave
+  // or else the camera freezes 🥺
+  const isFocused = navigation.isFocused();
+
+  useEffect(() => {
+
+    if (isFocused) {
+      // Call only when screen open or when back on screen
+      setMountCamera(true);
+      console.log("mounted camera");
+    }
+
+  }, [isFocused]);
 
   if (permission === null) {
     return <View></View>
@@ -54,6 +69,8 @@ export default function Scan({ route, navigation }) {
 
   function returnToPreviousScreen() {
 
+    setMountCamera(false);
+
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
     if (retakeMode && photos.length !== 0) {
 
@@ -74,6 +91,8 @@ export default function Scan({ route, navigation }) {
 
   function gotoGallery() {
 
+    setMountCamera(false);
+
     if (retakeMode && photos.length !== 0) {
       this.camera.resumePreview();
       setBackString("Cancel");
@@ -93,10 +112,14 @@ export default function Scan({ route, navigation }) {
         onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
 
       <View style={styles.view}>
-        <Camera
-          style={styles.camera}
-          type={CameraType.back}
-          ref={ref => { this.camera = ref}}/>
+        { mountCamera ?
+          <Camera
+            style={styles.camera}
+            type={CameraType.back}
+            ref={ref => { this.camera = ref}}/>
+          :
+          <View
+            style={styles.camera}/>}
         <View style={styles.footer}>
           <View style={styles.row}>
             <TextButton

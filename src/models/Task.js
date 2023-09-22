@@ -71,32 +71,6 @@ class Task {
   }
 
 
-  static fromScannedText(text) {
-    const dueDate = text.split('@')[1]?.trim();
-    let name;
-
-    if (dueDate) {
-      name = text.match(/#(.*?)@/)[1].trim();
-    } else {
-      name = text.split('#')[1].trim();
-    }
-
-    const todayDate = new Date();
-    const nextDueDate = this.calculateNextDueDate(todayDate, dueDate);
-
-    if (nextDueDate) {
-      const day = nextDueDate.getDate();
-      const month = nextDueDate.getMonth() + 1;
-      const year = nextDueDate.getFullYear();
-      const modifiedDueDate = `${day}/${month}/${year}`;
-
-      return new Task({ name, dueDate: modifiedDueDate });
-    }
-
-    return new Task({ name, dueDate });
-  }
-
-
   static fromDisplayableText(text) {
     const dueDate = text.split('Due at: ')[1]?.trim();
     let name = text;

@@ -22,55 +22,80 @@ class Task {
     this.dueDate = props.dueDate;
   }
 
+  static calculateNextDueDate(todayDate, dueDate) {
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dueDateLower = dueDate.toLowerCase();
+
+    if (dueDateLower.includes('next')) {
+      const dayOfWeek = daysOfWeek.find(day => dueDateLower.includes(day) || dueDateLower.includes(day.slice(0, 3)));
+      if (dayOfWeek) {
+        const targetDay = daysOfWeek.indexOf(dayOfWeek);
+        const daysUntilTarget = (targetDay - todayDate.getDay() + 7) % 7;
+        const nextDueDate = new Date(todayDate);
+        nextDueDate.setDate(todayDate.getDate() + daysUntilTarget + 1); // Adding 1 to ensure it's always the next week
+
+        return nextDueDate;
+      } else if (dueDateLower.includes('week')) {
+        const nextDueDate = new Date(todayDate);
+        nextDueDate.setDate(todayDate.getDate() + 7); // Next week
+        return nextDueDate;
+      }
+    }
+
+    return null;
+  }
+
   static fromScannedText(text) {
     const dueDate = text.split('@')[1]?.trim();
-  
-    if (dueDate && dueDate.includes('next')) {
-      let todayDate = new Date();
-      let nextDay = new Date(todayDate);
-  
-      if (dueDate.toLowerCase().includes('monday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 1) % 7);
-      } else if (dueDate.toLowerCase().includes('tuesday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 2) % 7);
-      } else if (dueDate.toLowerCase().includes('wednesday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 3) % 7);
-      } else if (dueDate.toLowerCase().includes('thursday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 4) % 7);
-      } else if (dueDate.toLowerCase().includes('friday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 5) % 7);
-      } else if (dueDate.toLowerCase().includes('saturday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 6) % 7);
-      } else if (dueDate.toLowerCase().includes('sunday')) {
-        nextDay.setDate(todayDate.getDate() + ((7 - todayDate.getDay()) + 7) % 7);
-      } else if (dueDate.includes('week')) {
-        nextDay.setDate(todayDate.getDate() + 7);
-      }
-  
-      const day = nextDay.getDate();
-      const month = nextDay.getMonth() + 1;
-      const year = nextDay.getFullYear();
-      const modifiedDueDate = `${day}/${month}/${year}`;
-  
-      let name;
-      if (dueDate) {
-        name = text.match(/#(.*?)@/)[1].trim();
-      } else {
-        name = text.split('#')[1].trim();
-      }
-  
-      return new Task({ name, dueDate: modifiedDueDate });
+    let name;
+
+    if (dueDate) {
+      name = text.match(/#(.*?)@/)[1].trim();
     } else {
-      let name;
-      if (dueDate) {
-        name = text.match(/#(.*?)@/)[1].trim();
-      } else {
-        name = text.split('#')[1].trim();
-      }
-  
-      return new Task({ name, dueDate});
+      name = text.split('#')[1].trim();
     }
+
+    const todayDate = new Date();
+    const nextDueDate = this.calculateNextDueDate(todayDate, dueDate);
+
+    if (nextDueDate) {
+      const day = nextDueDate.getDate();
+      const month = nextDueDate.getMonth() + 1;
+      const year = nextDueDate.getFullYear();
+      const modifiedDueDate = `${day}/${month}/${year}`;
+
+      return new Task({ name, dueDate: modifiedDueDate });
+    }
+
+    return new Task({ name, dueDate });
   }
+
+
+  static fromScannedText(text) {
+    const dueDate = text.split('@')[1]?.trim();
+    let name;
+
+    if (dueDate) {
+      name = text.match(/#(.*?)@/)[1].trim();
+    } else {
+      name = text.split('#')[1].trim();
+    }
+
+    const todayDate = new Date();
+    const nextDueDate = this.calculateNextDueDate(todayDate, dueDate);
+
+    if (nextDueDate) {
+      const day = nextDueDate.getDate();
+      const month = nextDueDate.getMonth() + 1;
+      const year = nextDueDate.getFullYear();
+      const modifiedDueDate = `${day}/${month}/${year}`;
+
+      return new Task({ name, dueDate: modifiedDueDate });
+    }
+
+    return new Task({ name, dueDate });
+  }
+
 
   static fromDisplayableText(text) {
     const dueDate = text.split('Due at: ')[1]?.trim();

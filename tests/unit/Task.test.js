@@ -85,4 +85,30 @@ describe('Task', () => {
       expect(task.displayableIndicatorColor).toBe('grey');
     });
   });
+
+  describe('calculateNextDueDate', () => {
+    it('should calculate the next due date for a specific day of the week', () => {
+      const todayDate = new Date('2023-09-25T12:00:00Z');
+      const dueDate = 'next tue';
+
+      const nextDueDate = Task.calculateNextDueDate(todayDate, dueDate);
+
+      const expectedNextDueDate = new Date('2023-09-26T00:00:00Z');
+
+      expect(nextDueDate).toEqual(expectedNextDueDate);
+    });
+  
+
+    it('should calculate the next due date for "next week"', () => {
+      const todayDate = new Date('2023-09-25T12:00:00Z');
+      const dueDate = 'next week';
+
+      const nextDueDate = Task.calculateNextDueDate(todayDate, dueDate);
+
+      const expectedNextDueDate = new Date('2023-10-02T00:00:00Z');
+
+      expect(nextDueDate).toEqual(expectedNextDueDate);
+    });
+  });
+
 });

@@ -8,6 +8,7 @@ class ScannedNote {
   constructor(props) {
     this.text = props.text;
   }
+  
 
   static fromTextractResponse(res) {
     const lines = res.Blocks

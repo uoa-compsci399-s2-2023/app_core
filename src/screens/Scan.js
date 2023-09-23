@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from "react";
 
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
 
 import {Screen} from "../components/Layout";
-import {Alert} from "../components/Modals.js";
 import {CaptureButton, TextButton} from "../components/Buttons.js";
-import {lightTheme} from "../Theme.js";
+import {lightTheme, scaledSize} from "../Theme.js";
 
 export default function Scan({ route, navigation }) {
 
@@ -70,7 +69,6 @@ export default function Scan({ route, navigation }) {
   function returnToPreviousScreen() {
 
     this.camera.resumePreview();
-    setMountCamera(false);
 
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
     if (retakeMode && photos.length !== 0) {
@@ -85,6 +83,8 @@ export default function Scan({ route, navigation }) {
     else {
       setPhotos([]);
       navigation.goBack();
+
+      setMountCamera(false);
     }
   }
 
@@ -104,32 +104,35 @@ export default function Scan({ route, navigation }) {
 
   return (
     <Screen>
-      <Alert
-        visible = {permission.granted === false}
-        modalTitle={"Camera Access"}
-        modalText={"For our application to work we require access to your camera."}
-        onConfirm={(confirmed) => { confirmed ? requestPermission() : navigation.goBack() }} />
-
       <View style={styles.view}>
-        { mountCamera ?
+        { mountCamera && permission.granted ?
           <Camera
             style={styles.camera}
             type={CameraType.back}
             ref={ref => { this.camera = ref}}/>
           :
-          <View
-            style={styles.camera}/>}
+          <View style={[styles.camera, styles.cameraPermissionView]}>
+            <Text style={[styles.errorText, styles.textNormal]}>{"Camera has no permissions your gay."}</Text>
+
+            {permission.canAskAgain ?
+              <TextButton
+                style={styles.textImportant}
+                onPress={() => requestPermission()}
+                buttonText={"Request Camera Permissions"}/> :
+              <Text style={[styles.errorText, styles.textImportant]}>
+                {"Open settings and enable permissions"}
+              </Text>}
+
+          </View>}
         <View style={styles.footer}>
           <View style={styles.row}>
             <TextButton
               style={styles.textNormal}
               onPress={() => returnToPreviousScreen()} buttonText={backString}/>
-
             <CaptureButton
               active={allowCapture}
               onPress={() => takePicture()}
               retakeMode={retakeMode}/>
-
             <TextButton
               style={styles.textImportant}
               onPress={() => gotoGallery()}
@@ -146,6 +149,14 @@ const styles = StyleSheet.create({
   camera: {
     height: "75%",
     width: "100%"
+  },
+  cameraPermissionView: {
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center"
+  },
+  errorText: {
+    fontSize: scaledSize(24)
   },
   footer: {
     flexDirection: "column",

@@ -55,25 +55,45 @@ export default function ImageGallery({ route, navigation }) {
 
     let textractResponseString = "";
 
-    for (let i = 0; i < photos.length; i++) {
+    setTimeout(async () => {
 
-      const photo = photos.at(i);
-      setSpinnerString(`Processing: ${i + 1}/${photos.length}...`);
+      for (let i = 0; i < photos.length; i++) {
 
-      const response = await textract.detectDocumentText({
-        data: Buffer.from(photo.base64, 'base64'),
-        credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY}
-      });
+        const photo = photos.at(i);
+        setSpinnerString(`Processing: ${i + 1}/${photos.length}...`);
 
-      textractResponseString += ScannedNote.fromTextractResponse(response).text + "\n";
-    }
+        const response = await textract.detectDocumentText({
+          data: Buffer.from(photo.base64, 'base64'),
+          credentials: {accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY}
+        });
 
-    // return states back to normal
-    setShowSpinner(false);
+        textractResponseString += ScannedNote.fromTextractResponse(response).text + "\n";
+      }
 
-    navigation.navigate('Scan Result', {
-      scannedText:  textractResponseString,
-    })
+      // return states back to normal
+      setShowSpinner(false);
+
+      navigation.navigate('Scan Result', {
+        scannedText: textractResponseString,
+      })
+
+      // textract.detectDocumentText({
+      //   data: Buffer.from(photos.at(0), 'base64'),
+      //   credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+      // }).then((response) => {
+      //
+      //   // return states back to normal
+      //   setPhotos([]);
+      //   setBackString('Cancel');
+      //   setCapturing(false);
+      //   setShowSpinner(false);
+      //   this.camera.resumePreview();
+      //
+      //   navigation.navigate('Scan Result', {
+      //     scannedText:  ScannedNote.fromTextractResponse(response).text,
+      //   })
+      // });
+    }, 1000);
   }
 
   return (

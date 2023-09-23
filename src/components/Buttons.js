@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Pressable, Image, StyleSheet, Text, View} from "react-native";
+import {Pressable, Image, StyleSheet, Text} from "react-native";
 
 import {lightTheme} from "../Theme";
 
@@ -37,24 +37,16 @@ export function LoginButton(props) {
   );
 }
 
-export function CaptureButton(props) {
+export function CaptureButton({active, onPress}) {
 
   const styles = StyleSheet.create({
     pressable: {
-      alignItems: "center",
       backgroundColor: lightTheme.background,
       borderColor: lightTheme.controlOutlineAlt,
       borderRadius: 90,
       borderWidth: 8,
-      flexDirection: "row",
       height: 80,
-      justifyContent: "center",
       width: 80,
-    },
-    text: {
-      color: lightTheme.textAlt,
-      fontSize: 24,
-      fontWeight: "bold"
     }
   });
 
@@ -62,21 +54,19 @@ export function CaptureButton(props) {
 
   const onButtonPress = (numPhotos) => {
 
-    if (!props.active) {
+    if (!active) {
       return;
     }
 
     // increment per press, reset when??
     setPhotos(prev => prev + 1);
 
-    if (props.onPress != null) {
-      props.onPress(numPhotos);
+    if (onPress != null) {
+      onPress(numPhotos);
     }
   };
 
   return (
-    <Pressable style={styles.pressable} onPress={() => onButtonPress(photos)}>
-      {props.retakeMode ? <View></View> : <Text style={styles.text}>{photos}</Text> }
-    </Pressable>
+    <Pressable style={styles.pressable} onPress={() => onButtonPress(photos)}/>
   );
 }

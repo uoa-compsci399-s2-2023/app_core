@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {Image, View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
@@ -10,6 +10,7 @@ import ScannedNote from "../models/ScannedNote.js";
 import {lightTheme, scaledSize, SCREEN_HEIGHT} from "../Theme.js";
 import {Screen} from "../components/Layout";
 import {TabsButton} from "../components/Buttons.js";
+import * as SecureStore from "expo-secure-store";
 
 export default function ImageGallery({ route, navigation }) {
 
@@ -17,6 +18,23 @@ export default function ImageGallery({ route, navigation }) {
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [spinnerString, setSpinnerString] = useState("");
+
+  // todo: remove once we inject keys in CI
+  const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
+  const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
+
+  useEffect(() => {
+    function initializeCredentials() {
+
+      SecureStore.getItemAsync('awsAccessKeyId')
+        .then((result) => setAwsAccessKeyId(result));
+
+      SecureStore.getItemAsync('awsSecretAccessKey')
+        .then((result) => setAwsSecretAccessKey(result));
+    }
+
+    initializeCredentials();
+  }, [])
 
   const imagePreview = (i) => {
 
@@ -64,7 +82,7 @@ export default function ImageGallery({ route, navigation }) {
 
         const response = await textract.detectDocumentText({
           data: Buffer.from(photo.base64, 'base64'),
-          credentials: {accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY}
+          credentials: {accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
         });
 
         textractResponseString += ScannedNote.fromTextractResponse(response).text + "\n";

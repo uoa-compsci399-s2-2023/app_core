@@ -27,7 +27,6 @@ export default function Scan({ route, navigation }) {
     if (isFocused) {
       // Call only when screen open or when back on screen
       setMountCamera(true);
-      console.log("mounted camera");
     }
 
   }, [isFocused]);
@@ -42,39 +41,39 @@ export default function Scan({ route, navigation }) {
       return;
     }
 
-    if (retakeMode) {
-      this.camera.pausePreview();
-    }
+    setAllowCapture(false);
 
-    const data = await this.camera.takePictureAsync({ base64: true })
+    this.camera.takePictureAsync({ base64: true }).then(data => {
 
-    if (retakeMode) {
+      setAllowCapture(true);
 
-      setBackString("Retake");
+      if (retakeMode) {
+        this.camera.pausePreview();
+        setBackString("Retake");
 
-      // update photos
-      const newPhotoArray = [
-        ...photos.slice(0, imageIndex),
-        data,
-        ...photos.slice(imageIndex + 1)
-      ];
+        // update photos
+        const newPhotoArray = [
+          ...photos.slice(0, imageIndex),
+          data,
+          ...photos.slice(imageIndex + 1)
+        ];
 
-      setPhotos(newPhotoArray);
-    }
-    else {
-      // store the base 64 of our photo into our "photos" array
-      setPhotos(oldPhotos => [...oldPhotos, data]);
-    }
+        setPhotos(newPhotoArray);
+      }
+      else {
+        // store the base 64 of our photo into our "photos" array
+        setPhotos(oldPhotos => [...oldPhotos, data]);
+      }
+    })
   }
 
   function returnToPreviousScreen() {
 
+    this.camera.resumePreview();
     setMountCamera(false);
 
     // if in retake mode, and we have taken a photo, then allow for another retake before exiting
     if (retakeMode && photos.length !== 0) {
-
-      this.camera.resumePreview();
       setBackString("Cancel");
 
       if (backString !== "Retake") {
@@ -91,10 +90,10 @@ export default function Scan({ route, navigation }) {
 
   function gotoGallery() {
 
+    this.camera.resumePreview();
     setMountCamera(false);
 
     if (retakeMode && photos.length !== 0) {
-      this.camera.resumePreview();
       setBackString("Cancel");
     }
 
@@ -128,10 +127,7 @@ export default function Scan({ route, navigation }) {
 
             <CaptureButton
               active={allowCapture}
-              onPress={() => {
-                setAllowCapture(false);
-                takePicture().then(() => { setAllowCapture(true); })
-              }}
+              onPress={() => takePicture()}
               retakeMode={retakeMode}/>
 
             <TextButton

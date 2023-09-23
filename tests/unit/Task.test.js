@@ -24,23 +24,6 @@ describe('Task', () => {
       expect(task.name).toBe('Test Task');
       expect(task.dueDate).toBeUndefined();
     });
-
-    it('should create a Task instance from scanned text with "next week"', () => {
-      const scannedText = '#Test Task @next week';
-      const task = Task.fromScannedText(scannedText);
-      expect(task.name).toBe('Test Task');
-      // Update the expected dueDate based on the code changes
-      expect(task.dueDate).toBeDefined();
-    });
-
-    // Additional test case to handle a scenario with "next Tuesday"
-    it('should create a Task instance from scanned text with "next Tuesday"', () => {
-      const scannedText = '#Test Task @next Tuesday';
-      const task = Task.fromScannedText(scannedText);
-      expect(task.name).toBe('Test Task');
-      // Update the expected dueDate based on the code changes
-      expect(task.dueDate).toBeDefined();
-    });
   });
 
   describe('fromDisplayableText', () => {

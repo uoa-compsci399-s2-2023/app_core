@@ -24,26 +24,36 @@ class Task {
 
   static calculateNextDueDate(todayDate, dueDate) {
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    if (!dueDate) {
+      return null;
+    }
     const dueDateLower = dueDate.toLowerCase();
 
     if (dueDateLower.includes('next')) {
       const dayOfWeek = daysOfWeek.find(day => dueDateLower.includes(day) || dueDateLower.includes(day.slice(0, 3)));
       if (dayOfWeek) {
         const targetDay = daysOfWeek.indexOf(dayOfWeek);
-        const daysUntilTarget = (targetDay - todayDate.getDay() + 7) % 7;
+        const todayDay = todayDate.getDay();
+        let daysUntilTarget = targetDay - todayDay;
+
+        if (daysUntilTarget <= 0) {
+          daysUntilTarget += 7; 
+        }
+
         const nextDueDate = new Date(todayDate);
-        nextDueDate.setDate(todayDate.getDate() + daysUntilTarget + 1); // Adding 1 to ensure it's always the next week
+        nextDueDate.setDate(todayDate.getDate() + daysUntilTarget);
 
         return nextDueDate;
       } else if (dueDateLower.includes('week')) {
         const nextDueDate = new Date(todayDate);
-        nextDueDate.setDate(todayDate.getDate() + 7); // Next week
+        nextDueDate.setDate(todayDate.getDate() + 7); 
         return nextDueDate;
       }
     }
 
     return null;
   }
+
 
   static fromScannedText(text) {
     const dueDate = text.split('@')[1]?.trim();
@@ -110,7 +120,7 @@ class Task {
     let indicatorColor = 'grey';
     if(this.dueDate) {
       const timeDifferenceInDays = getTimeDifferenceInDays(this.dueDate);
-      if (timeDifferenceInDays >= 0 && timeDifferenceInDays <= 2) {
+      if (timeDifferenceInDays <= 0 && timeDifferenceInDays <= 2) {
         indicatorColor = 'red';
       } else if (timeDifferenceInDays >= 3 && timeDifferenceInDays <= 5) {
         indicatorColor = 'orange';

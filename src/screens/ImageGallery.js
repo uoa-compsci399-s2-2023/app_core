@@ -128,7 +128,7 @@ export default function ImageGallery({ route, navigation }) {
         </ScrollView>
         <View style={styles.footer}>
           <View style={styles.row}>
-            <TabsButton text={"Cancel"} onPress={() => navigation.navigate("Login")}/>
+            <TabsButton text={"Cancel"} onPress={() => navigation.navigate("Scan")}/>
             <TabsButton text={"Confirm"} onPress={() => processTextract()}/>
           </View>
         </View>

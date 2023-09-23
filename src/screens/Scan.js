@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-import * as SecureStore from 'expo-secure-store';
+import React, {useState} from "react";
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {View, StyleSheet, Text, PixelRatio} from 'react-native';
@@ -10,7 +9,6 @@ import textract from "../textract.js";
 import ScannedNote from "../models/ScannedNote.js";
 
 import {Screen} from "../components/Layout";
-import {Alert} from "../components/Modals.js";
 import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
 
@@ -22,27 +20,9 @@ export default function Scan({ route, navigation }) {
   const {retakeMode} = route.params;
 
   const [capturing, setCapturing] = useState(false);
-  const [missingAWS, setMissingAWS] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
-
-  // todo: remove once we have gallery view
-  const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
-  const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
-
-  useEffect(() => {
-    function initializeCredentials() {
-
-      SecureStore.getItemAsync('awsAccessKeyId')
-        .then((result) => setAwsAccessKeyId(result));
-
-      SecureStore.getItemAsync('awsSecretAccessKey')
-        .then((result) => setAwsSecretAccessKey(result));
-    }
-
-    initializeCredentials();
-  }, [])
 
   function takePicture() {
 
@@ -95,16 +75,6 @@ export default function Scan({ route, navigation }) {
     // and goes to the Scan results screen
     if (retakeMode && photos.length === 1) {
 
-      const noAwsCredentials =
-        awsAccessKeyId == null || awsSecretAccessKey == null ||
-        awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
-
-      setMissingAWS(noAwsCredentials);
-
-      if (noAwsCredentials) {
-        return;
-      }
-
       setShowSpinner(true);
 
       setTimeout(() => {
@@ -134,13 +104,6 @@ export default function Scan({ route, navigation }) {
         visible={showSpinner}
         textContent={'Analysing...'}
       />
-
-      <Alert
-        visible={missingAWS}
-        isError={true}
-        modalTitle={"AWS Access Key"}
-        modalText={"Could not find AWS access keys, please set your access keys first."}
-        onConfirm={() => setMissingAWS(false)}/>
 
       <View style={styles.view}>
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />

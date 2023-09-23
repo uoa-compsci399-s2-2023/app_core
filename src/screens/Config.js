@@ -41,6 +41,11 @@ export default function Config({ navigation }) {
           })}
         title="Results Screen Bypass"
       />
+      <Button
+        onPress={() =>
+          navigation.navigate('Scan')}
+        title="Skip MS Login"
+      />
       <View>
         <Text style={styles.inputField}>AWS Access Key ID</Text>
         <TextInput

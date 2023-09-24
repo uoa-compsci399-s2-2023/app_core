@@ -1,11 +1,23 @@
 import Task from './Task';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const FILE_NAME_TOKENS = ['title', 'file name'];
-const FOLDER_TOKEN = 'folder';
-const TASK_TOKEN = '#';
+let FILE_NAME_TOKENS = ['title', 'file name'];
+let FOLDER_TOKEN = 'folder';
+let TASK_TOKEN = '#';
+
+async function doStuff() {
+  var Sync1 = await AsyncStorage.getItem('FileName1Local');
+  var Sync2 = await AsyncStorage.getItem('FileName2Local');
+  FILE_NAME_TOKENS = [Sync1, Sync2];
+  FOLDER_TOKEN = await AsyncStorage.getItem('folderTokenLocal');
+  TASK_TOKEN = await AsyncStorage.getItem('taskTokenLocal')
+  return;
+}
 
 class ScannedNote {
   constructor(props) {
+    doStuff()
+    console.log(FILE_NAME_TOKENS, FOLDER_TOKEN, TASK_TOKEN);
     this.text = props.text;
   }
 
@@ -36,7 +48,7 @@ class ScannedNote {
       const lower = line.toLowerCase();
       return lower.startsWith(FILE_NAME_TOKENS[0]) || lower.startsWith(FILE_NAME_TOKENS[1]);
     });
-    if(!matchingLine) {
+    if (!matchingLine) {
       return `Tabs - ${new Date().toDateString()}`;
     }
     return `${matchingLine.match(/:\s*(.+)/)[1]} ${new Date().toDateString()}`;
@@ -47,7 +59,7 @@ class ScannedNote {
       const lower = line.toLowerCase();
       return lower.startsWith(FOLDER_TOKEN);
     });
-    if(!matchingLine) {
+    if (!matchingLine) {
       return 'Unsorted';
     }
     return matchingLine.match(/:\s*(.+)/)[1];
@@ -55,7 +67,7 @@ class ScannedNote {
 
   get tasks() {
     return this.splitText.map(line => {
-      if(line.startsWith(TASK_TOKEN)) {
+      if (line.startsWith(TASK_TOKEN)) {
         return Task.fromScannedText(line)
       }
     }).filter(t => t);

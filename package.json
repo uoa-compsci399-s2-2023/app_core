@@ -50,7 +50,8 @@
     "jest": "^29.6.2"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": ["./tests/jestSetupFile.js"]
   },
   "private": true,
   "type": "module"

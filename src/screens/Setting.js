@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderRadius: 5,
     borderWidth: 1,
-    fontSize: 18,
     flexDirection: 'row',
     height: 40,
     paddingHorizontal: 10,

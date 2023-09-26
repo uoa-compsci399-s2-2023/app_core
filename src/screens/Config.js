@@ -24,7 +24,7 @@ export default function Config({ navigation }) {
 
   const persistConfig = async () => {
     await SecureStore.setItemAsync('awsAccessKeyId', awsAccessKeyId);
-    await SecureStore.setItemAsync('awsSecretAccessKey',awsSecretAccessKey);
+    await SecureStore.setItemAsync('awsSecretAccessKey', awsSecretAccessKey);
     navigation.goBack();
   }
 
@@ -40,6 +40,11 @@ export default function Config({ navigation }) {
             scannedText: placeholderText,
           })}
         title="Results Screen Bypass"
+      />
+      <Button
+        onPress={() =>
+          navigation.navigate('Tabs')}
+        title="Tabs Hub Bypass"
       />
       <View>
         <Text style={styles.inputField}>AWS Access Key ID</Text>

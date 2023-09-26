@@ -1,36 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, TextInput, Text, View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import AppContext from '../components/AppContext';
 import { Screen } from "../components/Layout";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Setting({ navigation }) {
 
-  let [FileName1, setFileName1] = useState('Title');
-  let [FileName2, setFileName2] = useState('file name');
-  let [folderToken, setfolder] = useState('folder');
-  let [taskToken, setTasktoken] = useState('#');
+export default function Setting({ navigation }) {
+  const tokens = useContext(AppContext);
+
+  const [FileName1, setFileName1] = useState(tokens.FileName1);
+  const [FileName2, setFileName2] = useState(tokens.FileName2);
+  const [folderToken, setfolder] = useState(tokens.folderToken);
+  const [taskToken, setTasktoken] = useState(tokens.taskToken);
 
   useEffect(() => {
-    async function initializeCreds() {
-      let FileName1 = await AsyncStorage.getItem('FileName1Local');
-      let FileName2 = await AsyncStorage.getItem('FileName2Local');
-      let folderToken = await AsyncStorage.getItem('folderTokenLocal');
-      let taskToken = await AsyncStorage.getItem('taskTokenLocal');
+    async function initializeTokens() {
+      const FileName1 = await AsyncStorage.getItem('FileName1Local');
+      const FileName2 = await AsyncStorage.getItem('FileName2Local');
+      const folderToken = await AsyncStorage.getItem('folderTokenLocal');
+      const taskToken = await AsyncStorage.getItem('taskTokenLocal');
       setFileName1(FileName1);
       setFileName2(FileName2);
       setfolder(folderToken);
       setTasktoken(taskToken);
     }
-    initializeCreds();
+    initializeTokens();
   }, [])
 
   const saveSettings = async () => {
-    FileName1 = FileName1 || 'Title';
-    FileName2 = FileName2 || 'file name';
-    folderToken = folderToken || 'folder';
-    taskToken = taskToken || '#'
+    tokens.setFileName1(FileName1);
+    tokens.setFileName2(FileName2);
+    tokens.setfolder(folderToken);
+    tokens.setTasktoken(taskToken);
     try {
       await AsyncStorage.setItem('FileName1Local', FileName1);
       await AsyncStorage.setItem('FileName2Local', FileName2);

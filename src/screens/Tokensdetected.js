@@ -1,5 +1,6 @@
-import React, {useRef, useState} from 'react';
-import {View, Text, StyleSheet, TextInput,TouchableOpacity, ScrollView} from 'react-native';
+import React, { useRef, useState, useContext } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import AppContext from '../components/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Screen } from "../components/Layout";
@@ -10,8 +11,10 @@ import ScannedNote from '../models/ScannedNote';
 import Task from '../models/Task';
 
 export default function TokensDetected({ route, navigation }) {
+  const tokens = useContext(AppContext);
   const { scannedText } = route.params;
-  const scannedNote = new ScannedNote({ text: scannedText });
+
+  const scannedNote = new ScannedNote({ text: scannedText }, [tokens.FileName1, tokens.FileName2], tokens.folderToken, tokens.taskToken);
   const inputRef = useRef(null);
 
   const [isEditingFile, setIsEditingFile] = useState(false);
@@ -57,7 +60,7 @@ export default function TokensDetected({ route, navigation }) {
       navigation.navigate('Scan');
     }, 1500)
   }
- 
+
   return (
     <Screen>
       <Spinner
@@ -75,7 +78,7 @@ export default function TokensDetected({ route, navigation }) {
         <View style={styles.dataContainer}>
           {isEditingFile ? (
             <ScrollView style={styles.textInputFormat}>
-              <TextInput 
+              <TextInput
                 ref={inputRef}
                 style={styles.input}
                 value={fileName}
@@ -127,7 +130,7 @@ export default function TokensDetected({ route, navigation }) {
                     </View>
                     <View style={styles.taskTitleContainer}>
                       {editingTaskIndex === index ? (
-                      // Edit mode: Show an editable input field
+                        // Edit mode: Show an editable input field
                         <TextInput
                           style={styles.taskTitleText}
                           value={editedTaskContent}
@@ -137,18 +140,18 @@ export default function TokensDetected({ route, navigation }) {
                           autoFocus
                         />
                       ) : (
-                      // Display task text, make it clickable to enter edit mode
+                        // Display task text, make it clickable to enter edit mode
                         <TouchableOpacity onPress={() => toggleEditTask(index, task)}>
                           <Text style={styles.taskTitleText}>{task.displayableText}</Text>
                         </TouchableOpacity>
                       )}
-                      
+
                     </View>
                   </View>
                 );
               })
             ) : (
-            // Display a message if there are no tasks
+              // Display a message if there are no tasks
               <Text>No tasks found</Text>
             )}
           </View>
@@ -173,7 +176,7 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    marginLeft: 'auto', 
+    marginLeft: 'auto',
     marginTop: 10,
 
   },
@@ -196,9 +199,9 @@ const styles = StyleSheet.create({
 
   taskIndicator: {
     borderRadius: 100,
-    height: 20, 
+    height: 20,
     marginRight: 10,
-    width: 50, 
+    width: 50,
 
   },
 
@@ -209,7 +212,7 @@ const styles = StyleSheet.create({
   taskIndicatorText: {
     color: 'gray',
     fontSize: 12,
-    
+
   },
   taskTitleContainer: {
     alignItems: 'center',
@@ -222,12 +225,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleContainer: {
-    alignItems: 'center', 
-    backgroundColor: '#e0e0e0', 
+    alignItems: 'center',
+    backgroundColor: '#e0e0e0',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 10,
     paddingLeft: 25,
   },

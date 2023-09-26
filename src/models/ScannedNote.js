@@ -1,23 +1,10 @@
 import Task from './Task';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-let FILE_NAME_TOKENS = ['title', 'file name'];
-let FOLDER_TOKEN = 'folder';
-let TASK_TOKEN = '#';
-
-async function doStuff() {
-  var Sync1 = await AsyncStorage.getItem('FileName1Local');
-  var Sync2 = await AsyncStorage.getItem('FileName2Local');
-  FILE_NAME_TOKENS = [Sync1, Sync2];
-  FOLDER_TOKEN = await AsyncStorage.getItem('folderTokenLocal');
-  TASK_TOKEN = await AsyncStorage.getItem('taskTokenLocal')
-  return;
-}
 
 class ScannedNote {
-  constructor(props) {
-    doStuff()
-    console.log(FILE_NAME_TOKENS, FOLDER_TOKEN, TASK_TOKEN);
+  constructor(props, FILE_NAME_TOKENS = ['title', 'file name'], FOLDER_TOKEN = 'folder', TASK_TOKEN = '#') {
+    this.FILE_NAME_TOKENS = FILE_NAME_TOKENS;
+    this.FOLDER_TOKEN = FOLDER_TOKEN;
+    this.TASK_TOKEN = TASK_TOKEN;
     this.text = props.text;
   }
 
@@ -36,17 +23,17 @@ class ScannedNote {
   }
 
   get body() {
-    return this.splitText.filter(s => !s.toLowerCase().startsWith(FILE_NAME_TOKENS[0]))
-      .filter(s => !s.toLowerCase().startsWith(FILE_NAME_TOKENS[1]))
-      .filter(s => !s.toLowerCase().startsWith(FOLDER_TOKEN))
-      .filter(s => !s.startsWith(TASK_TOKEN))
+    return this.splitText.filter(s => !s.toLowerCase().startsWith(this.FILE_NAME_TOKENS[0]))
+      .filter(s => !s.toLowerCase().startsWith(this.FILE_NAME_TOKENS[1]))
+      .filter(s => !s.toLowerCase().startsWith(this.FOLDER_TOKEN))
+      .filter(s => !s.startsWith(this.TASK_TOKEN))
       .join('\n');
   }
 
   get fileName() {
     const matchingLine = this.splitText.find(line => {
       const lower = line.toLowerCase();
-      return lower.startsWith(FILE_NAME_TOKENS[0]) || lower.startsWith(FILE_NAME_TOKENS[1]);
+      return lower.startsWith(this.FILE_NAME_TOKENS[0]) || lower.startsWith(this.FILE_NAME_TOKENS[1]);
     });
     if (!matchingLine) {
       return `Tabs - ${new Date().toDateString()}`;
@@ -57,7 +44,7 @@ class ScannedNote {
   get folder() {
     const matchingLine = this.splitText.find(line => {
       const lower = line.toLowerCase();
-      return lower.startsWith(FOLDER_TOKEN);
+      return lower.startsWith(this.FOLDER_TOKEN);
     });
     if (!matchingLine) {
       return 'Unsorted';
@@ -67,7 +54,7 @@ class ScannedNote {
 
   get tasks() {
     return this.splitText.map(line => {
-      if (line.startsWith(TASK_TOKEN)) {
+      if (line.startsWith(this.TASK_TOKEN)) {
         return Task.fromScannedText(line)
       }
     }).filter(t => t);

@@ -26,6 +26,7 @@ export default function Scan({ route, navigation }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
+  const [textractError, setTextractError] = useState(null);
 
   // todo: remove once we have gallery view
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
@@ -123,6 +124,8 @@ export default function Scan({ route, navigation }) {
           navigation.navigate('Scan Result', {
             scannedText:  ScannedNote.fromTextractResponse(response).text,
           })
+        }).catch(err => {
+          setTextractError(err)
         });
       }, 1000);
     }
@@ -141,6 +144,14 @@ export default function Scan({ route, navigation }) {
         modalTitle={"AWS Access Key"}
         modalText={"Could not find AWS access keys, please set your access keys first."}
         onConfirm={() => setMissingAWS(false)}/>
+      
+      <Alert
+        visible={textractError}
+        isError={true}
+        modalTitle={"Processing failed."}
+        modalText={JSON.stringify(textractError)}
+        onConfirm={() => setTextractError(null)}
+      />
 
       <View style={styles.view}>
         <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />

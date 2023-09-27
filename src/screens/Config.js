@@ -43,8 +43,8 @@ export default function Config({ navigation }) {
       />
       <Button
         onPress={() =>
-          navigation.navigate('Tabs')}
-        title="Tabs Hub Bypass"
+          navigation.navigate('Scan')}
+        title="Login Bypass"
       />
       <View>
         <Text style={styles.inputField}>AWS Access Key ID</Text>

@@ -22,16 +22,20 @@ const getFontSize = size => size / fontScale;
 export default function Scan({ route, navigation }) {
 
   const {retakeMode} = route.params;
-  //
+  
   const renderProfileOption = () => (
     <TouchableOpacity onPress={toggleModal} style={styles.profileButton}>
-      <Icon name="user" size={20} color="white" />
+      <Icon name="user" size={20} color="gray" />
     </TouchableOpacity>
   );
 
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: renderProfileOption
+      headerLeft: renderProfileOption,
+      headerStyle: {
+        backgroundColor: lightTheme.backgroundDark
+      },
+      headerTitle: ''
     })
   }, [navigation]
   );
@@ -224,9 +228,9 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   doneButton: {
-    color: 'blue',
+    color: '#0078D4',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'right',
   },
   footer: {
@@ -244,11 +248,12 @@ const styles = StyleSheet.create({
   logoutButton: {
     color: 'red',
     fontSize: 16,
+    fontWeight: '500',
     marginBottom: 10,
     textAlign: 'center',
   },
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#F0F0F0',
     borderRadius: 10,
     padding: 20,
   },
@@ -259,7 +264,7 @@ const styles = StyleSheet.create({
   },
   profileButton: {
     alignItems: 'center',
-    backgroundColor: lightTheme.backgroundDark,
+    backgroundColor: '#F1FEFB',
     borderRadius: 100,
     height: 30,
     justifyContent: 'center',

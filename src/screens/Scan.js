@@ -28,9 +28,23 @@ export default function Scan({ route, navigation }) {
   const [photos, setPhotos] = useState([]);
   const [backString, setBackString] = useState("Cancel");
 
+
+   useEffect(() => {
+    async function requestCameraPermission() {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Camera permission not granted');
+      }
+    }
+
+    requestCameraPermission();
+  }, []);
+
   // todo: remove once we have gallery view
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
   const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
+
+
 
   useEffect(() => {
     function initializeCredentials() {

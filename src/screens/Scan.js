@@ -111,18 +111,17 @@ export default function Scan({ navigation }) {
         data: Buffer.from(photos.at(0), 'base64'),
         credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
       }).then((response) => {
-
-        // return states back to normal
-        setPhotos([]);
-        setCapturing(false);
-        setShowSpinner(false);
-        setEnableCamera(false);
-
         navigation.navigate('Scan Result', {
           scannedText:  ScannedNote.fromTextractResponse(response).text,
         })
       }).catch(err => {
         setTextractError(err)
+      }).finally(() => {
+        // return states back to normal
+        setPhotos([]);
+        setCapturing(false);
+        setShowSpinner(false);
+        setEnableCamera(false);
       });
     }, 1000);
   }

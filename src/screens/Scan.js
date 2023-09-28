@@ -2,12 +2,14 @@ import React, {useEffect, useState} from "react";
 import * as SecureStore from 'expo-secure-store';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {View, StyleSheet, Text, PixelRatio} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, PixelRatio } from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
 import {Buffer} from 'buffer';
 
 import textract from "../textract.js";
 import ScannedNote from "../models/ScannedNote.js";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Modal from 'react-native-modal';
 
 import {Screen} from "../components/Layout";
 import {Alert} from "../components/Modals.js";
@@ -19,7 +21,39 @@ const fontScale = PixelRatio.getFontScale();
 const getFontSize = size => size / fontScale;
 
 export default function Scan({ navigation }) {
+  
+  const renderProfileOption = () => (
+    <TouchableOpacity onPress={toggleModal} style={styles.profileButton}>
+      <Icon name="user" size={20} color="gray" />
+    </TouchableOpacity>
+  );
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: renderProfileOption,
+      headerStyle: {
+        backgroundColor: lightTheme.backgroundDark
+      },
+      headerTitle: ''
+    })
+  }, [navigation]
+  );
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync('accessToken');
+      
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
   const [capturing, setCapturing] = useState(false);
   const [missingAWS, setMissingAWS] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -133,6 +167,21 @@ export default function Scan({ navigation }) {
         textContent={'Analysing...'}
       />
 
+      <View>
+        <Modal isVisible={isModalVisible}>
+          <View style={styles.modalContainer}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.modalText}>Settings</Text>
+              <TouchableOpacity onPress={toggleModal}>
+                <Text style={styles.doneButton}>Done</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.logoutButton}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
       <Alert
         visible={missingAWS}
         isError={true}
@@ -175,11 +224,49 @@ const styles = StyleSheet.create({
     height: "75%",
     width: "100%"
   },
+  doneButton: {
+    color: '#0078D4',
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'right',
+  },
   footer: {
     flexDirection: "column",
     height: "25%",
     justifyContent: "center",
     width: "100%",
+  },
+  headerContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between', 
+    marginBottom: 20,
+  },
+  logoutButton: {
+    color: 'red',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    padding: 20,
+  },
+  modalText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  profileButton: {
+    alignItems: 'center',
+    backgroundColor: '#F1FEFB',
+    borderRadius: 100,
+    height: 30,
+    justifyContent: 'center',
+    margin: 1,
+    width: 30,
   },
   row: {
     alignItems: "center",
@@ -204,7 +291,6 @@ const styles = StyleSheet.create({
     backgroundColor: lightTheme.backgroundDark,
     flexDirection: "column",
     height: "100%",
-    paddingTop: "14%",
     width: "100%"
-  }
+  },
 });

@@ -9,7 +9,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Splash from './screens/Splash';
-import Login from "./screens/Login";
+import Login from './screens/Login';
 import Scan from './screens/Scan';
 import Config from './screens/Config';
 import ScanResult from './screens/ScanResult';
@@ -23,8 +23,8 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
-        <Stack.Screen name="Scan" component={Scan} options={{headerShown: false}} initialParams={{ retakeMode: true }}/>
+        <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
+        <Stack.Screen name="Scan" component={Scan} options={{headerTitleAlign: 'center', headerShown: true}} initialParams={{ retakeMode: false }} />
         <Stack.Screen name="Config" component={Config} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="Scan Result" component={ScanResult} options={{headerTitleAlign: 'center'}} />
         <Stack.Screen name="Tokens Detected" component={TokensDetected} />

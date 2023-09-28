@@ -31,12 +31,19 @@ export default function Scan({ navigation }) {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: renderProfileOption,
+      headerRight: renderSettings,
       headerStyle: {
         backgroundColor: lightTheme.backgroundDark
-      },
-      headerTitle: ''
+      }
     })
   }, [navigation]
+  );
+
+  const renderSettings = () => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Setting')}>
+    <Icon name={'cog'} size={30} color={'grey'} />
+    </TouchableOpacity>
   );
 
   const [isModalVisible, setModalVisible] = useState(false);

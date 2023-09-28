@@ -20,34 +20,34 @@ const Stack = createNativeStackNavigator();
 
 function App() {
 
-  const [FileName1, setFileName1] = useState('title');
-  const [FileName2, setFileName2] = useState('file name');
+  const [FileName, setFileName] = useState('file name');
   const [folderToken, setfolder] = useState('folder');
   const [taskToken, setTasktoken] = useState('#');
+  const [dueDateToken, setdueDateToken] = useState('@');
 
   useEffect(() => {
     async function initializeTokens() {
-      const FileName1 = await AsyncStorage.getItem('FileName1Local');
-      const FileName2 = await AsyncStorage.getItem('FileName2Local');
+      const FileName = await AsyncStorage.getItem('FileName1Local');
       const folderToken = await AsyncStorage.getItem('folderTokenLocal');
       const taskToken = await AsyncStorage.getItem('taskTokenLocal');
-      setFileName1(FileName1);
-      setFileName2(FileName2);
+      const dueDateToken = await AsyncStorage.getItem('dueDateTokenLocal');
+      setFileName(FileName);
       setfolder(folderToken);
       setTasktoken(taskToken);
+      setdueDateToken(dueDateToken);
     }
     initializeTokens();
   }, [])
 
   const Settings = {
-    FileName1: FileName1,
-    FileName2: FileName2,
+    FileName: FileName,
     folderToken: folderToken,
     taskToken: taskToken,
-    setFileName1,
-    setFileName2,
+    dueDateToken: dueDateToken,
+    setFileName,
     setfolder,
     setTasktoken,
+    setdueDateToken
   };
 
   return (
@@ -55,8 +55,8 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: true, title: '', headerBackVisible: false, headerTransparent: true }}  />
-          <Stack.Screen name="Scan" component={Scan} options={{headerTitleAlign: 'center',  headerShown: true }} initialParams={{ retakeMode: false }}  />
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false}}  />
+          <Stack.Screen name="Scan" component={Scan} options={{headerTitleAlign: 'center',  headerShown: true, title: '' }} initialParams={{ retakeMode: false }}  />
           <Stack.Screen name="Setting" component={Setting} options={{ headerTitleAlign: 'center' }} />
           <Stack.Screen name="Config" component={Config} options={{ headerTitleAlign: 'center' }} />
           <Stack.Screen name="Scan Result" component={ScanResult} options={{ headerTitleAlign: 'center' }} />

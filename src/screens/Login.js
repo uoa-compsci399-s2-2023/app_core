@@ -35,22 +35,6 @@ export default function Login({ navigation }) {
     await SecureStore.setItemAsync('accessToken', accessToken);
   }
 
-  const renderSettings = () => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('Setting')}
-    >
-      <Icon name={'cog'} size={30} color={'grey'} />
-    </TouchableOpacity>
-  );
-
-  React.useEffect(() => {
-    navigation.setOptions({
-      headerRight: renderSettings
-    })
-  }, [navigation]
-  );
-
-
   return (
     <Screen>
       <View flexDirection='column' gap={20} style={styles.view}>

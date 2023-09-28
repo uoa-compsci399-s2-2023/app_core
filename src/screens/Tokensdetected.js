@@ -14,7 +14,7 @@ export default function TokensDetected({ route, navigation }) {
   const tokens = useContext(AppContext);
   const { scannedText } = route.params;
 
-  const scannedNote = new ScannedNote({ text: scannedText }, [tokens.FileName1, tokens.FileName2], tokens.folderToken, tokens.taskToken);
+  const scannedNote = new ScannedNote({ text: scannedText }, tokens.FileName, tokens.folderToken, tokens.taskToken, tokens.dueDateToken);
   const inputRef = useRef(null);
 
   const [isEditingFile, setIsEditingFile] = useState(false);

@@ -9,35 +9,35 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default function Setting({ navigation }) {
   const tokens = useContext(AppContext);
 
-  const [FileName1, setFileName1] = useState(tokens.FileName1);
-  const [FileName2, setFileName2] = useState(tokens.FileName2);
+  const [FileName, setFileName] = useState(tokens.FileName);
   const [folderToken, setfolder] = useState(tokens.folderToken);
   const [taskToken, setTasktoken] = useState(tokens.taskToken);
+  const [dueDateToken, setdueDateToken] = useState(tokens.dueDateToken);
 
   useEffect(() => {
     async function initializeTokens() {
-      const FileName1 = await AsyncStorage.getItem('FileName1Local')|| 'title';
-      const FileName2 = await AsyncStorage.getItem('FileName2Local') || 'file name';
+      const FileName = await AsyncStorage.getItem('FileName1Local')|| 'file name';
       const folderToken = await AsyncStorage.getItem('folderTokenLocal') || 'folder';
       const taskToken = await AsyncStorage.getItem('taskTokenLocal') || '#';
-      setFileName1(FileName1);
-      setFileName2(FileName2);
+      const dueDateToken = await AsyncStorage.getItem('dueDateTokenLocal') || '@';
+      setFileName(FileName);
       setfolder(folderToken);
       setTasktoken(taskToken);
+      setdueDateToken(dueDateToken);
     }
     initializeTokens();
   }, [])
 
   const saveSettings = async () => {
-    tokens.setFileName1(FileName1.toLowerCase());
-    tokens.setFileName2(FileName2.toLowerCase());
-    tokens.setfolder(folderToken.toLowerCase());
-    tokens.setTasktoken(taskToken.toLowerCase());
+    tokens.setFileName(FileName.toLowerCase() || 'file name');
+    tokens.setfolder(folderToken.toLowerCase() || 'folder');
+    tokens.setTasktoken(taskToken.toLowerCase() || '#');
+    tokens.setdueDateToken(dueDateToken.toLowerCase() || '@');
     try {
-      await AsyncStorage.setItem('FileName1Local', FileName1.toLowerCase());
-      await AsyncStorage.setItem('FileName2Local', FileName2.toLowerCase());
-      await AsyncStorage.setItem('folderTokenLocal', folderToken.toLowerCase());
-      await AsyncStorage.setItem('taskTokenLocal', taskToken.toLowerCase());
+      await AsyncStorage.setItem('FileName1Local', FileName.toLowerCase() || 'file name');
+      await AsyncStorage.setItem('folderTokenLocal', folderToken.toLowerCase() || 'folder');
+      await AsyncStorage.setItem('taskTokenLocal', taskToken.toLowerCase() || '#');
+      await AsyncStorage.setItem('dueDateTokenLocal', dueDateToken.toLowerCase() || '@');
     } catch (error) {
       console.log(error);
     }
@@ -48,19 +48,11 @@ export default function Setting({ navigation }) {
     <Screen>
       <View>
         <View>
-          <Text style={styles.inputField}>File Name Token 1</Text>
+          <Text style={styles.inputField}>File Name Token</Text>
           <TextInput
             style={styles.inputContainer}
-            onChangeText={setFileName1}
-            value={FileName1}
-          />
-        </View>
-        <View>
-          <Text style={styles.inputField}>File Name Token 2</Text>
-          <TextInput
-            style={styles.inputContainer}
-            onChangeText={setFileName2}
-            value={FileName2}
+            onChangeText={setFileName}
+            value={FileName}
           />
         </View>
         <View >
@@ -77,6 +69,14 @@ export default function Setting({ navigation }) {
             style={styles.inputContainer}
             onChangeText={setTasktoken}
             value={taskToken}
+          />
+        </View>
+        <View>
+          <Text style={styles.inputField}>Due Date Token</Text>
+          <TextInput
+            style={styles.inputContainer}
+            onChangeText={setdueDateToken}
+            value={dueDateToken}
           />
         </View>
       </View>

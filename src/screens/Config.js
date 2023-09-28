@@ -10,7 +10,7 @@ export default function Config({ navigation }) {
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
   const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
   const [showAccessKey, setShowAccessKey] = useState(false);
-  const placeholderText = "Title : pass\n #pass \n folder : pass \n";
+  const placeholderText = "Title : pass\n #pass @ 01/9/2023 \n !pass @ 02/9/2023 \n $pass @ 03/9/2023 \n $pass \n task pass @ 04/9/2023 \n task pass ! 05/9/2023 \n task pass \nfolder : pass";
   useEffect(() => {
     async function initializeCreds() {
       const awsAccessKeyId = await SecureStore.getItemAsync('awsAccessKeyId');

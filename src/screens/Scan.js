@@ -15,13 +15,12 @@ import {Screen} from "../components/Layout";
 import {Alert} from "../components/Modals.js";
 import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
+import {useIsFocused} from "@react-navigation/native";
 
 const fontScale = PixelRatio.getFontScale();
 const getFontSize = size => size / fontScale;
 
-export default function Scan({ route, navigation }) {
-
-  const {retakeMode} = route.params;
+export default function Scan({ navigation }) {
   
   const renderProfileOption = () => (
     <TouchableOpacity onPress={toggleModal} style={styles.profileButton}>
@@ -59,8 +58,9 @@ export default function Scan({ route, navigation }) {
   const [missingAWS, setMissingAWS] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [backString, setBackString] = useState("Cancel");
   const [textractError, setTextractError] = useState(null);
+  const [enableCamera, setEnableCamera] = useState(false);
+  const [permission, requestPermission] = Camera.useCameraPermissions()
 
   // todo: remove once we have gallery view
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
@@ -79,6 +79,25 @@ export default function Scan({ route, navigation }) {
     initializeCredentials();
   }, [])
 
+  useEffect(() => {
+
+    if (!permission || !permission.granted) {
+      requestPermission().then();
+    }
+
+  }, [permission]);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      setEnableCamera(true);
+    }
+    else {
+      setEnableCamera(false);
+    }
+  }, [isFocused]);
+
   function takePicture() {
 
     if (!this.camera) {
@@ -89,80 +108,57 @@ export default function Scan({ route, navigation }) {
     // stop our button from being pressed while capturing
     setCapturing(true);
 
-    this.camera.pausePreview();
     this.camera.takePictureAsync({ base64: true }).then((data) => {
 
-      if (retakeMode) {
-        setBackString("Retake");
-        setPhotos([data.base64]);
-      }
-      else {
-        // store the base 64 of our photo into our "photos" array
-        setPhotos(oldPhotos => [...oldPhotos, data.base64]);
+      // store the base 64 of our photo into our "photos" array
+      setPhotos(oldPhotos => [...oldPhotos, data.base64]);
 
-        // resume our ability to take another photo
-        setCapturing(false);
-        this.camera.resumePreview();
-      }
+      // resume our ability to take another photo
+      setCapturing(false);
     });
   }
 
   function returnToPreviousScreen() {
 
     setPhotos([]);
-
-    // if in retake mode, and we have taken a photo, then allow for another retake before exiting
-    if (retakeMode && photos.length === 1) {
-
-      setBackString("Cancel");
-      setCapturing(false);
-
-      this.camera.resumePreview();
-    }
-    else {
-      navigation.goBack();
-    }
+    setCapturing(false);
+    setEnableCamera(false);
+    navigation.goBack();
   }
 
   function gotoGallery() {
 
-    // todo: rewrite once we have gallery implemented, right now it just passes the everything to Textract
-    // and goes to the Scan results screen
-    if (retakeMode && photos.length === 1) {
+    const noAwsCredentials =
+      awsAccessKeyId == null || awsSecretAccessKey == null ||
+      awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
 
-      const noAwsCredentials =
-        awsAccessKeyId == null || awsSecretAccessKey == null ||
-        awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
+    setMissingAWS(noAwsCredentials);
 
-      setMissingAWS(noAwsCredentials);
-
-      if (noAwsCredentials) {
-        return;
-      }
-
-      setShowSpinner(true);
-
-      setTimeout(() => {
-        textract.detectDocumentText({
-          data: Buffer.from(photos.at(0), 'base64'),
-          credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
-        }).then((response) => {
-  
-          // return states back to normal
-          setPhotos([]);
-          setBackString('Cancel');
-          setCapturing(false);
-          setShowSpinner(false);
-          this.camera.resumePreview();
-  
-          navigation.navigate('Scan Result', {
-            scannedText:  ScannedNote.fromTextractResponse(response).text,
-          })
-        }).catch(err => {
-          setTextractError(err)
-        });
-      }, 1000);
+    if (noAwsCredentials) {
+      return;
     }
+
+    setShowSpinner(true);
+
+    setTimeout(() => {
+      textract.detectDocumentText({
+        data: Buffer.from(photos.at(0), 'base64'),
+        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+      }).then((response) => {
+
+        // return states back to normal
+        setPhotos([]);
+        setCapturing(false);
+        setShowSpinner(false);
+        setEnableCamera(false);
+
+        navigation.navigate('Scan Result', {
+          scannedText:  ScannedNote.fromTextractResponse(response).text,
+        })
+      }).catch(err => {
+        setTextractError(err)
+      });
+    }, 1000);
   }
 
   return (
@@ -203,14 +199,16 @@ export default function Scan({ route, navigation }) {
       />
 
       <View style={styles.view}>
-        <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} />
+        {enableCamera ?
+          <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} /> :
+          <View style={styles.camera}/>}
         <View style={styles.footer}>
           <View style={styles.row}>
             <Text
               style={[styles.textButton, styles.textNormal]}
-              onPress={() => returnToPreviousScreen()}>{backString}</Text>
+              onPress={() => returnToPreviousScreen()}>{"Cancel"}</Text>
 
-            <CaptureButton active={!capturing} onPress={() => { takePicture() }} retakeMode={retakeMode}/>
+            <CaptureButton active={!capturing} onPress={() => { takePicture() }}/>
 
             <Text
               style={[styles.textButton, styles.textImportant]}

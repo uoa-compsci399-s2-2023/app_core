@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {View, StyleSheet, Text, TouchableOpacity, PixelRatio } from 'react-native';
-import {Camera, CameraType} from 'expo-camera';
-import {Buffer} from 'buffer';
+import { View, StyleSheet, Text, TouchableOpacity, PixelRatio } from 'react-native';
+import { Camera, CameraType } from 'expo-camera';
+import { Buffer } from 'buffer';
 
 import textract from "../textract.js";
 import ScannedNote from "../models/ScannedNote.js";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
 
-import {Screen} from "../components/Layout";
-import {Alert} from "../components/Modals.js";
-import {CaptureButton} from "../components/Buttons.js";
-import {lightTheme} from "../Theme.js";
-import {useIsFocused} from "@react-navigation/native";
+import { Screen } from "../components/Layout";
+import { Alert } from "../components/Modals.js";
+import { CaptureButton } from "../components/Buttons.js";
+import { lightTheme } from "../Theme.js";
+import { useIsFocused } from "@react-navigation/native";
 
 const fontScale = PixelRatio.getFontScale();
 const getFontSize = size => size / fontScale;
 
 export default function Scan({ navigation }) {
-  
+
   const renderProfileOption = () => (
     <TouchableOpacity onPress={toggleModal} style={styles.profileButton}>
       <Icon name="user" size={20} color="gray" />
@@ -42,7 +42,7 @@ export default function Scan({ navigation }) {
   const renderSettings = () => (
     <TouchableOpacity
       onPress={() => navigation.navigate('Setting')}>
-    <Icon name={'cog'} size={30} color={'grey'} />
+      <Icon name={'cog'} size={30} color={'grey'} />
     </TouchableOpacity>
   );
 
@@ -55,7 +55,7 @@ export default function Scan({ navigation }) {
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync('accessToken');
-      
+
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -150,10 +150,10 @@ export default function Scan({ navigation }) {
     setTimeout(() => {
       textract.detectDocumentText({
         data: Buffer.from(photos.at(0), 'base64'),
-        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey }
       }).then((response) => {
         navigation.navigate('Scan Result', {
-          scannedText:  ScannedNote.fromTextractResponse(response).text,
+          scannedText: ScannedNote.fromTextractResponse(response).text,
         })
       }).catch(err => {
         setTextractError(err)
@@ -194,8 +194,8 @@ export default function Scan({ navigation }) {
         isError={true}
         modalTitle={"AWS Access Key"}
         modalText={"Could not find AWS access keys, please set your access keys first."}
-        onConfirm={() => setMissingAWS(false)}/>
-      
+        onConfirm={() => setMissingAWS(false)} />
+
       <Alert
         visible={textractError}
         isError={true}
@@ -206,15 +206,15 @@ export default function Scan({ navigation }) {
 
       <View style={styles.view}>
         {enableCamera ?
-          <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref}} /> :
-          <View style={styles.camera}/>}
+          <Camera style={styles.camera} type={CameraType.back} ref={ref => { this.camera = ref }} /> :
+          <View style={styles.camera} />}
         <View style={styles.footer}>
           <View style={styles.row}>
             <Text
               style={[styles.textButton, styles.textNormal]}
               onPress={() => returnToPreviousScreen()}>{"Cancel"}</Text>
 
-            <CaptureButton active={!capturing} onPress={() => { takePicture() }}/>
+            <CaptureButton active={!capturing} onPress={() => { takePicture() }} />
 
             <Text
               style={[styles.textButton, styles.textImportant]}
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   logoutButton: {

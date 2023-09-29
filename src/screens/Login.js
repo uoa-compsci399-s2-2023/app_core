@@ -1,9 +1,8 @@
 import * as React from "react";
 import * as SecureStore from 'expo-secure-store';
-import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, Text} from "react-native";
 import { LoginButton } from "../components/Buttons";
 import { Screen } from "../components/Layout";
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 import { exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";

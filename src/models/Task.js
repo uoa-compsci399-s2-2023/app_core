@@ -56,7 +56,7 @@ class Task {
 
   static checkRegex (value){
     let Token = value
-    regexSepcial =['.', '+', '*', '?', '^', '$', '(', ')', '[', ']', '{', '}', '|', '\\']
+    const regexSepcial =['.', '+', '*', '?', '^', '$', '(', ')', '[', ']', '{', '}', '|', '\\']
     for (var i = 0; i < regexSepcial.length; i++) {
       if (regexSepcial[i] == Token){
         Token = "\\" + Token; 
@@ -76,8 +76,9 @@ class Task {
       const regex = new RegExp (`${regTaskToken}(.*?)${regDueDateToken}`);
       name = text.match(regex)[1].trim();
     } else {
-      const regex = new RegExp (`${regTaskToken}[ ]*?[a-zA-Z0-9]*?[ |\t]*[a-zA-Z0-9]*`);
-      name = (text.match(regex)[0]).replace(taskToken, '').trim();
+      const regex = new RegExp (`${regTaskToken}(.*)`);
+      name = (text.match(regex)[1]).trim();
+      
     }
 
     const todayDate = new Date();

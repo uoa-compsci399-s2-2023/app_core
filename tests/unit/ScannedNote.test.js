@@ -50,7 +50,8 @@ describe('ScannedNote', () => {
     it('should return the file name when a line is found to start with title:', () => {
       const scannedNote = new ScannedNote({
         text: 'title: my file name\nMy\nName\nIs\nSlim\nShady'
-      });
+      }, "title"
+      );
       expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
@@ -64,22 +65,33 @@ describe('ScannedNote', () => {
     it('should find the file name even when case is upper', () => {
       const scannedNote = new ScannedNote({
         text: 'TITLE: my file name\nMy\nName\nIs\nSlim\nShady'
-      });
+      }, "title"
+      );
       expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should strip the file name of all white space', () => {
       const scannedNote = new ScannedNote({
         text: 'TITLE:             my file name          \nMy\nName\nIs\nSlim\nShady'
-      });
+      }, "title"
+      );
       expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
     });
 
     it('should find the file name when the file name is in the middle of the text', () => {
       const scannedNote = new ScannedNote({
         text: 'Hello\n TITLE: my file name \nMy\nName\nIs\nSlim\nShady'
-      });
+      }, "title"
+      );
       expect(scannedNote.fileName).toEqual('my file name Tue Sep 12 2023');
+    });
+
+    it('should find the custom file name when given', () => {
+      const scannedNote = new ScannedNote({
+        text: 'Hello\n custom: is it right'
+      }, "custom"
+      );
+      expect(scannedNote.fileName).toEqual('is it right Tue Sep 12 2023');
     });
 
     it('should return a default file name when no match is found', () => {
@@ -119,6 +131,13 @@ describe('ScannedNote', () => {
       expect(scannedNote.folder).toEqual('my folder');
     });
 
+    it('should find the custom folder when given', () => {
+      const scannedNote = new ScannedNote({
+        text: 'Hello\n custom: my folder \nMy\nName\nIs\nSlim\nShady'
+      },"filename","custom");
+      expect(scannedNote.folder).toEqual('my folder');
+    });
+
     it('should return a default folder when no match is found', () => {
       const scannedNote = new ScannedNote({
         text: 'Hello\nMy\nName\nIs\nSlim\nShady'
@@ -138,11 +157,24 @@ describe('ScannedNote', () => {
       ]);
     });
 
-    it('should return an empty array when no lines are found to start with #', () => {
+    it('should return an array with task using the token !', () => {
       const scannedNote = new ScannedNote({
-        text: 'Hello\nMy @ 13/12/2023\nName\nIs @ 12/12/2023\nSlim\nShady'
-      });
-      expect(scannedNote.tasks).toEqual([]);
+        text: 'Hello\n ! My @ 13/12/2023\n Name\n !Is @ 12/12/2023\nSlim\nShady'
+      },"title","folder","!");
+      expect(scannedNote.tasks).toEqual([
+        new Task({ name: 'My', dueDate: '13/12/2023' }),
+        new Task({ name: 'Is', dueDate: '12/12/2023' }),
+      ]);
+    });
+
+    it('should return an array with task using the tasktoken ! duedateToken $', () => {
+      const scannedNote = new ScannedNote({
+        text: 'Hello\n ! My $ 13/12/2023\n Name\n !Is $ 12/12/2023\nSlim\nShady'
+      },"title","folder","!","$");
+      expect(scannedNote.tasks).toEqual([
+        new Task({ name: 'My', dueDate: '13/12/2023' }),
+        new Task({ name: 'Is', dueDate: '12/12/2023' }),
+      ]);
     });
 
     it('should return tasks with no due date when lines do not have @ token', () => {
@@ -166,7 +198,38 @@ describe('ScannedNote', () => {
         # Is @ 12/08/2021
         Slim
         Shady`
-      });
+      }, "title"
+      );
+      expect(scannedNote.body).toEqual('Name\nSlim\nShady')
+    })
+  })
+
+  describe('body', () => {
+    it('should strip all tokens', () => {
+      const scannedNote = new ScannedNote({
+        text: `catch me
+              folder: pass
+              title: pass
+              #pass
+              pls`
+      }, "title"
+      );
+      expect(scannedNote.body).toEqual('catch me\npls')
+    })
+  })
+
+  describe('body', () => {
+    it('should strip all tokens', () => {
+      const scannedNote = new ScannedNote({
+        text: `Title: My Title
+        Folder: my/folder/notes
+        # My @ 13/09/2023
+        Name
+        # Is @ 12/08/2021
+        Slim
+        Shady`
+      }, "title"
+      );
       expect(scannedNote.body).toEqual('Name\nSlim\nShady')
     })
   })

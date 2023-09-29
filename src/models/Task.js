@@ -54,15 +54,31 @@ class Task {
     return null;
   }
 
+  static checkRegex (value){
+    let Token = value
+    const regexSepcial =['.', '+', '*', '?', '^', '$', '(', ')', '[', ']', '{', '}', '|', '\\']
+    for (var i = 0; i < regexSepcial.length; i++) {
+      if (regexSepcial[i] == Token){
+        Token = "\\" + Token; 
+        break;
+      }
+    }
+    return Token;
+  }
 
-  static fromScannedText(text) {
-    const dueDate = text.split('@')[1]?.trim();
-    let name;
 
+  static fromScannedText(text, taskToken, dueDateToken) {
+    const dueDate = text.split(dueDateToken)[1]?.trim();
+    let name = text;
+    const regTaskToken = this.checkRegex(taskToken);
+    const regDueDateToken = this.checkRegex(dueDateToken);
     if (dueDate) {
-      name = text.match(/#(.*?)@/)[1].trim();
+      const regex = new RegExp (`${regTaskToken}(.*?)${regDueDateToken}`);
+      name = text.match(regex)[1].trim();
     } else {
-      name = text.split('#')[1].trim();
+      const regex = new RegExp (`${regTaskToken}(.*)`);
+      name = (text.match(regex)[1]).trim();
+      
     }
 
     const todayDate = new Date();

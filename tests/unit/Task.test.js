@@ -13,14 +13,14 @@ describe('Task', () => {
   describe('fromScannedText', () => {
     it('should create a Task instance from scanned text with due date', () => {
       const scannedText = '#Test Task @15/09/2023';
-      const task = Task.fromScannedText(scannedText);
+      const task = Task.fromScannedText(scannedText, "#" , "@");
       expect(task.name).toBe('Test Task');
       expect(task.dueDate).toBe('15/09/2023');
     });
 
     it('should create a Task instance from scanned text without due date', () => {
       const scannedText = '#Test Task';
-      const task = Task.fromScannedText(scannedText);
+      const task = Task.fromScannedText(scannedText, "#" , "@");
       expect(task.name).toBe('Test Task');
       expect(task.dueDate).toBeUndefined();
     });
@@ -29,14 +29,14 @@ describe('Task', () => {
   describe('fromDisplayableText', () => {
     it('should create a Task instance from displayable text with due date', () => {
       const displayableText = 'Test Task\nDue at: 15/09/2023';
-      const task = Task.fromDisplayableText(displayableText);
+      const task = Task.fromDisplayableText(displayableText, "#" , "@");
       expect(task.name).toBe('Test Task');
       expect(task.dueDate).toBe('15/09/2023');
     });
 
     it('should create a Task instance from displayable text without due date', () => {
       const displayableText = 'Test Task';
-      const task = Task.fromDisplayableText(displayableText);
+      const task = Task.fromDisplayableText(displayableText, "#" , "@");
       expect(task.name).toBe('Test Task');
       expect(task.dueDate).toBeUndefined();
     });

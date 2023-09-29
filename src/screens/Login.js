@@ -1,13 +1,14 @@
 import * as React from "react";
 import * as SecureStore from 'expo-secure-store';
-import {View, Image, StyleSheet, Text} from "react-native";
-import {LoginButton} from "../components/Buttons";
-import {Screen} from "../components/Layout";
+import { View, Image, StyleSheet, Text} from "react-native";
+import { LoginButton } from "../components/Buttons";
+import { Screen } from "../components/Layout";
 
-import {exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";
 
-export default function Login({ navigation}) {
-  
+import { exchangeCodeAsync, makeRedirectUri, useAuthRequest, useAutoDiscovery, } from "expo-auth-session";
+
+export default function Login({ navigation }) {
+
   // Endpoint
   const discovery = useAutoDiscovery(
     "https://login.microsoftonline.com/common/v2.0",
@@ -20,7 +21,7 @@ export default function Login({ navigation}) {
 
   const clientId = '7644da13-4be5-4c5c-860e-f068183aa631';
 
-  const [request,, promptAsync] = useAuthRequest(
+  const [request, , promptAsync] = useAuthRequest(
     {
       clientId,
       scopes: ['openid', 'profile', 'email', 'offline_access', 'files.readwrite', 'tasks.readwrite'],
@@ -37,9 +38,9 @@ export default function Login({ navigation}) {
     <Screen>
       <View flexDirection='column' gap={20} style={styles.view}>
         {/* Todo: Use SVG instead of PNG, I couldn't get SVGs to work and gave up for now 😢. */}
-        <Image source={require("../../assets/logo/tabs.png")}/>
+        <Image source={require("../../assets/logo/tabs.png")} />
         <LoginButton
-          text="Sign in with Microsoft" 
+          text="Sign in with Microsoft"
           icon={require("../../assets/icons/microsoft.png")}
           onPress={() =>
             promptAsync().then((codeResponse) => {

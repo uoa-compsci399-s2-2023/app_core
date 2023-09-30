@@ -111,6 +111,15 @@ describe('Task', () => {
       const expectedNextDueDate = new Date('2023-09-11T00:00:00Z'); // Monday of this week
       expect(nextDueDate).toEqual(expectedNextDueDate);
     });
+
+    //test if the date is today
+    it('should calculate the next due date for "today"', () => {
+      const todayDate = new Date('2023-09-09T00:00:00Z'); 
+      const dueDate = 'today';
+      const nextDueDate = Task.calculateNextDueDate(todayDate, dueDate);
+      const expectedNextDueDate = new Date('2023-09-09T00:00:00Z'); 
+      expect(nextDueDate).toEqual(expectedNextDueDate);
+    });
   });
 
 

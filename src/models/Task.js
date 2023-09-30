@@ -29,6 +29,16 @@ class Task {
     }
     const dueDateLower = dueDate.toLowerCase();
 
+
+    if (dueDateLower.includes('today') || dueDateLower.includes('tomorrow')) {
+      const day = dueDateLower.includes('today') ? todayDate.getDate() : todayDate.getDate() + 1;
+      const month = todayDate.getMonth() + 1;
+      const year = todayDate.getFullYear();
+      const modifiedDueDate = `${day}/${month}/${year}`;
+      return modifiedDueDate;
+    }
+
+
     if (dueDateLower.includes('next')) {
       const dayOfWeek = daysOfWeek.find(day => dueDateLower.includes(day) || dueDateLower.includes(day.slice(0, 3)));
       if (dayOfWeek) {

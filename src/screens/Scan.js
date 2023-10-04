@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState, useEffect} from "react";
 import * as SecureStore from 'expo-secure-store';
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -12,10 +12,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
 
 import {Screen} from "../components/Layout";
-import {Alert} from "../components/Modals.js";
 import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
 import {useIsFocused} from "@react-navigation/native";
+import { Alert } from '../components/Modals.js';
 
 const fontScale = PixelRatio.getFontScale();
 const getFontSize = size => size / fontScale;
@@ -55,29 +55,11 @@ export default function Scan({ navigation }) {
     }
   };
   const [capturing, setCapturing] = useState(false);
-  const [missingAWS, setMissingAWS] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [textractError, setTextractError] = useState(null);
   const [enableCamera, setEnableCamera] = useState(false);
   const [permission, requestPermission] = Camera.useCameraPermissions()
-
-  // todo: remove once we have gallery view
-  const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
-  const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
-
-  useEffect(() => {
-    function initializeCredentials() {
-
-      SecureStore.getItemAsync('awsAccessKeyId')
-        .then((result) => setAwsAccessKeyId(result));
-
-      SecureStore.getItemAsync('awsSecretAccessKey')
-        .then((result) => setAwsSecretAccessKey(result));
-    }
-
-    initializeCredentials();
-  }, [])
 
   useEffect(() => {
 
@@ -128,22 +110,12 @@ export default function Scan({ navigation }) {
 
   function gotoGallery() {
 
-    const noAwsCredentials =
-      awsAccessKeyId == null || awsSecretAccessKey == null ||
-      awsAccessKeyId.length === 0 || awsSecretAccessKey.length === 0;
-
-    setMissingAWS(noAwsCredentials);
-
-    if (noAwsCredentials) {
-      return;
-    }
-
     setShowSpinner(true);
 
     setTimeout(() => {
       textract.detectDocumentText({
         data: Buffer.from(photos.at(0), 'base64'),
-        credentials: { accessKeyId: awsAccessKeyId, secretAccessKey: awsSecretAccessKey}
+        credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY }
       }).then((response) => {
         navigation.navigate('Scan Result', {
           scannedText:  ScannedNote.fromTextractResponse(response).text,
@@ -182,13 +154,6 @@ export default function Scan({ navigation }) {
           </View>
         </Modal>
       </View>
-      <Alert
-        visible={missingAWS}
-        isError={true}
-        modalTitle={"AWS Access Key"}
-        modalText={"Could not find AWS access keys, please set your access keys first."}
-        onConfirm={() => setMissingAWS(false)}/>
-      
       <Alert
         visible={textractError}
         isError={true}

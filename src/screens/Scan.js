@@ -137,6 +137,8 @@ export default function Scan({ navigation }) {
       <Spinner
         visible={showSpinner}
         textContent={'Analysing...'}
+        overlayColor='rgba(236, 240, 241, 0.5)'
+        color='black'
       />
 
       <View>

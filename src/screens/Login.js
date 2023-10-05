@@ -1,4 +1,5 @@
 import * as React from "react";
+import jwtDecode from 'jwt-decode';
 import * as SecureStore from 'expo-secure-store';
 import { View, Image, StyleSheet } from "react-native";
 import {LoginButton} from "../components/Buttons";
@@ -29,10 +30,6 @@ export default function Login({ navigation}) {
     discovery,
   );
 
-  const saveAccessToken = async (accessToken) => {
-    await SecureStore.setItemAsync('accessToken', accessToken);
-  }
-
   return (
     <Screen>
       <View flexDirection='column' gap={20} style={styles.view}>
@@ -55,7 +52,9 @@ export default function Login({ navigation}) {
                   },
                   discovery,
                 ).then((res) => {
-                  saveAccessToken(res.accessToken);
+                  const decodedIdToken = jwtDecode(res.idToken);
+                  SecureStore.setItemAsync('preferredUserName', decodedIdToken.preferred_username);
+                  SecureStore.setItemAsync('accessToken', res.accessToken);
                   navigation.navigate('Scan')
                 });
               }

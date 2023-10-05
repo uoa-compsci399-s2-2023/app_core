@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import * as SecureStore from 'expo-secure-store';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {View, StyleSheet, Text, TouchableOpacity, PixelRatio } from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {Camera, CameraType} from 'expo-camera';
 import {Buffer} from 'buffer';
 
@@ -16,9 +16,6 @@ import {CaptureButton} from "../components/Buttons.js";
 import {lightTheme} from "../Theme.js";
 import {useIsFocused} from "@react-navigation/native";
 import { Alert } from '../components/Modals.js';
-
-const fontScale = PixelRatio.getFontScale();
-const getFontSize = size => size / fontScale;
 
 export default function Scan({ navigation }) {
   
@@ -56,7 +53,6 @@ export default function Scan({ navigation }) {
   };
   const [capturing, setCapturing] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [photos, setPhotos] = useState([]);
   const [textractError, setTextractError] = useState(null);
   const [enableCamera, setEnableCamera] = useState(false);
   const [permission, requestPermission] = Camera.useCameraPermissions()
@@ -80,56 +76,36 @@ export default function Scan({ navigation }) {
     }
   }, [isFocused]);
 
-  function takePicture() {
-
-    if (!this.camera) {
-      return;
-    }
-
-    // this is so hacky omg,
-    // stop our button from being pressed while capturing
-    setCapturing(true);
-
-    this.camera.takePictureAsync({ base64: true }).then((data) => {
-
-      // store the base 64 of our photo into our "photos" array
-      setPhotos(oldPhotos => [...oldPhotos, data.base64]);
-
-      // resume our ability to take another photo
-      setCapturing(false);
-    });
-  }
-
-  function returnToPreviousScreen() {
-
-    setPhotos([]);
-    setCapturing(false);
-    setEnableCamera(false);
-    navigation.goBack();
-  }
-
   function gotoGallery() {
 
     setShowSpinner(true);
 
-    setTimeout(() => {
-      textract.detectDocumentText({
-        data: Buffer.from(photos.at(0), 'base64'),
-        credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY }
-      }).then((response) => {
-        navigation.navigate('Scan Result', {
-          scannedText:  ScannedNote.fromTextractResponse(response).text,
-        })
-      }).catch(err => {
-        setTextractError(err)
-      }).finally(() => {
-        // return states back to normal
-        setPhotos([]);
-        setCapturing(false);
-        setShowSpinner(false);
-        setEnableCamera(false);
-      });
-    }, 1000);
+    if (!this.camera) {
+      return;
+    }
+    // this is so hacky omg,
+    // stop our button from being pressed while capturing
+    setCapturing(true);
+    this.camera.takePictureAsync({ base64: true }).then((data) => {
+      this.camera.pausePreview();
+      setTimeout(() => {
+        textract.detectDocumentText({
+          data: Buffer.from(data.base64, 'base64'),
+          credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY }
+        }).then((response) => {
+          setEnableCamera(false);
+          navigation.navigate('Scan Result', {
+            scannedText:  ScannedNote.fromTextractResponse(response).text,
+          })
+        }).catch(err => {
+          setTextractError(err)
+        }).finally(() => {
+          // return states back to normal
+          setCapturing(false);
+          setShowSpinner(false);
+        });
+      }, 1000);
+    });
   }
 
   return (
@@ -170,15 +146,7 @@ export default function Scan({ navigation }) {
           <View style={styles.camera}/>}
         <View style={styles.footer}>
           <View style={styles.row}>
-            <Text
-              style={[styles.textButton, styles.textNormal]}
-              onPress={() => returnToPreviousScreen()}>{"Cancel"}</Text>
-
-            <CaptureButton active={!capturing} onPress={() => { takePicture() }}/>
-
-            <Text
-              style={[styles.textButton, styles.textImportant]}
-              onPress={() => gotoGallery()}>{photos.length === 0 ? "" : "Done"}</Text>
+            <CaptureButton active={!capturing} onPress={() => { gotoGallery() }}/>
           </View>
         </View>
       </View>
@@ -238,21 +206,9 @@ const styles = StyleSheet.create({
   row: {
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingLeft: 20,
     paddingRight: 20
-  },
-  textButton: {
-    fontSize: getFontSize(24),
-    fontWeight: "normal",
-    textAlign: "center",
-    width: getFontSize(85)
-  },
-  textImportant: {
-    color: lightTheme.importantColor
-  },
-  textNormal: {
-    color: lightTheme.text,
   },
   view: {
     backgroundColor: lightTheme.backgroundDark,

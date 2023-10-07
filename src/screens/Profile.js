@@ -43,16 +43,6 @@ export default function Login({ navigation}) {
         </View>
         <View>
           <Text style={styles.settingsHeader}>Settings</Text>
-          <View style={[styles.settingsItemContainer, styles.spaceBottom]}>
-            <Text style={styles.settingsItemHeader}>Dark Mode: </Text>
-            <Switch
-              value={false}
-              disabled={true}
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={'#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-            />
-          </View>
           <Text style={styles.settingsItemHeader}>Tokens: </Text>
           <View style={styles.settingsItemContainer}>
             <Text >File Name: </Text>

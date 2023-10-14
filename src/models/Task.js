@@ -29,28 +29,34 @@ class Task {
     }
     const dueDateLower = dueDate.toLowerCase();
 
-    if (dueDateLower.includes('next')) {
+    if (dueDateLower.includes('today')) {
+      return todayDate; // Due Today
+    } else if (dueDateLower.includes('tomorrow')) {
+      const tomorrow = new Date(todayDate);
+      tomorrow.setDate(todayDate.getDate() + 1);
+      return tomorrow; // Due Tomorrow
+    } else if (dueDateLower.includes('next')) {
       const dayOfWeek = daysOfWeek.find(day => dueDateLower.includes(day) || dueDateLower.includes(day.slice(0, 3)));
       if (dayOfWeek) {
         const targetDay = daysOfWeek.indexOf(dayOfWeek);
         const todayDay = todayDate.getDay();
         let daysUntilTarget = targetDay - todayDay;
-
+  
         if (daysUntilTarget <= 0) {
-          daysUntilTarget += 7; 
+          daysUntilTarget += 7;
         }
-
+  
         const nextDueDate = new Date(todayDate);
         nextDueDate.setDate(todayDate.getDate() + daysUntilTarget);
-
+  
         return nextDueDate;
       } else if (dueDateLower.includes('week')) {
         const nextDueDate = new Date(todayDate);
-        nextDueDate.setDate(todayDate.getDate() + 7); 
+        nextDueDate.setDate(todayDate.getDate() + 7);
         return nextDueDate;
       }
     }
-
+  
     return null;
   }
 

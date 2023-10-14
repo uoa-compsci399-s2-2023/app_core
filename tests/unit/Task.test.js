@@ -111,6 +111,22 @@ describe('Task', () => {
       const expectedNextDueDate = new Date('2023-09-11T00:00:00Z'); // Monday of this week
       expect(nextDueDate).toEqual(expectedNextDueDate);
     });
+
+    it('should calculate the next due date for "today"', () => {
+      const todayDate = new Date('2023-09-09T00:00:00Z'); // A Saturday
+      const dueDate = 'today';
+      const nextDueDate = Task.calculateNextDueDate(todayDate, dueDate);
+      const expectedNextDueDate = todayDate; // Same day
+      expect(nextDueDate).toEqual(expectedNextDueDate);
+    });
+  
+    it('should calculate the next due date for "tomorrow"', () => {
+      const todayDate = new Date('2023-09-09T00:00:00Z'); // A Saturday
+      const dueDate = 'tomorrow';
+      const nextDueDate = Task.calculateNextDueDate(todayDate, dueDate);
+      const expectedNextDueDate = new Date('2023-09-10T00:00:00Z'); // Next day
+      expect(nextDueDate).toEqual(expectedNextDueDate);
+    });
   });
 
 
